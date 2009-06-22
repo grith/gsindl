@@ -31,16 +31,16 @@ Att_map = {'extendedkeyusage': 'extendedKeyUsage',
            'subjectaltname': 'subjectAltName',
           }
 
-multi_attrs ={ 'keyusage': { 'digitalsignature' : 'Digital Signature',
+multi_attrs = { 'keyusage': { 'digitalsignature' : 'Digital Signature',
                             'keyencipherment' : 'Key Encipherment',
                            }
               , 'extendedkeyusage' : { 'clientauth' : 'clientAuth', }
-             }
+              }
 
 
 class Certificate:
-    def __init__(self, privateKey=None, publicKey=None,
-                 certificateRequest=None, dn=None, extensions=None)
+    def __init__(self, dn=None, keySize=2048, privateKey=None, publicKey=None,
+                 certificateRequest=None, extensions=None):
 
         self.signed = False
 
@@ -49,7 +49,7 @@ class Certificate:
         if privateKey:
             self._privateKey = privateKey
         else:
-            self._privateKey = RSA.gen_key(2048, m2.RSA_F4)
+            self._privateKey = RSA.gen_key(keySize, m2.RSA_F4)
 
         # Create public key object
         if publicKey:
@@ -72,8 +72,10 @@ class Certificate:
         if extensions:
             self.setExtensions(dn)
 
+        self.sign()
 
-    def setDN(self, dn)
+
+    def setDN(self, dn):
         x509Name = X509.X509_Name()
         for entry in dn.split(','):
             l = entry.split("=")
