@@ -4,7 +4,7 @@ Introduction
 This library provides some utility classes and functions for deailing with X509 certificates. Most of the tasks performed by these classes are trivial but they require use of the M2Crypto classes which can be a pain.
 
 >>> import arcs.gsi.certificate
->>> c = arcs.gsi.certificate.Certificate()
+>>> c = arcs.gsi.certificate.CertificateRequest()
 >>> c.setDN("DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim")
 >>> print c.getCertificateRequest().as_text()
 Certificate Request:
@@ -25,8 +25,8 @@ Certificate Request:
 
 Generating a request with a 1024 bit key for compatablity with older applications.
 
->>> c = arcs.gsi.certificate.Certificate(dn="DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim", keySize=1024)
->>> print c.getCertificateRequest().as_text()
+>>> c = arcs.gsi.certificate.CertificateRequest(dn="DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim", keySize=1024)
+>>> print c
 Certificate Request:
     Data:
         Version: 0 (0x0)
@@ -42,4 +42,12 @@ Certificate Request:
     Signature Algorithm: sha1WithRSAEncryption
         ...
 <BLANKLINE>
+
+It's easier to access a certificate without needing to introspect M2Crypto to figure out the calls.
+>>> c
+-----BEGIN CERTIFICATE REQUEST-----
+...
+-----END CERTIFICATE REQUEST-----
+<BLANKLINE>
+
 

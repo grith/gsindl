@@ -38,7 +38,7 @@ multi_attrs = { 'keyusage': { 'digitalsignature' : 'Digital Signature',
               }
 
 
-class Certificate:
+class CertificateRequest:
     def __init__(self, dn=None, keySize=2048, privateKey=None, publicKey=None,
                  certificateRequest=None, extensions=None):
 
@@ -70,7 +70,7 @@ class Certificate:
             self.setDN(dn)
 
         if extensions:
-            self.setExtensions(dn)
+            self.setExtensions(extensions)
 
         self.sign()
 
@@ -88,9 +88,12 @@ class Certificate:
 
     def setExtensions(self, extensions):
         extstack = X509.X509_Extension_Stack()
-        for e in extenstions:
+        for e in extensions:
             name = e['name']
             critical = e['critical']
+            if name.lower() in multi_attrs:
+                e['value'] = ', '.join([multi_attrs[name.lower()][v.lower()]
+                               for v in e['value'].split(',')])
             extstack.push(X509.new_extension(Att_map[name.lower()],
                                              e['value'],
                                              critical=int(critical)))
@@ -110,10 +113,17 @@ class Certificate:
 
 
     def getPrivateKey(self):
-        return self.privateKey
+        return self._privateKey
 
 
     def getPublicKey(self):
-        return self.publicKey
+        return self._publicKey
 
+
+    def __str__(self):
+        return self._certificateRequest.as_text()
+
+
+    def __repr__(self):
+        return self._certificateRequest.as_pem()
 
