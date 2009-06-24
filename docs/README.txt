@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This library provides some utility classes and functions for deailing with X509 certificates. Most of the tasks performed by these classes are trivial but they require use of the M2Crypto classes which can be a pain.
+This library provides some utility classes and functions for deailing with X509 certificates. Most of the tasks performed by these classes are trivial but they require use of the M2Crypto classes which can be a pain. The problem isn't that the M2Crypto classes are complex, it just that when doing GSI tasks i find myself repeating work in different projects.
 
 >>> import arcs.gsi.certificate
 >>> r = arcs.gsi.certificate.CertificateRequest()

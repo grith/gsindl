@@ -5,4 +5,7 @@ Changelog
 ----------------
 
 * Initial release
+* Certificate Classes added
+* Proxy Classes added
+* Key Classes added
 

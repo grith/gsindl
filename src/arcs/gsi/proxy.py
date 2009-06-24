@@ -91,11 +91,3 @@ class ProxyCertificate:
         return self._proxy.__repr__()
 
 
-#req = load_request_string(dat, X509.FORMAT_DER)
-#proxy = proxylib.ProxyFactory(cert="/home/russell/.globus-slcs/usercert.pem", key="/home/russell/.globus-slcs/userkey.pem", callback=getpass)
-#pkey = req.get_pubkey()
-#pcert = X509.X509()
-#pcert.set_pubkey(pkey)
-#proxy.set_proxycert(pcert)
-#proxy.generate()
-#signedproxy = proxy.getproxy()

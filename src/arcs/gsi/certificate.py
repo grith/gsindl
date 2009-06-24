@@ -252,7 +252,7 @@ class Certificate:
 
     def get_key(self):
         if self._key:
-            return self._certificate._key
+            return self._key
         raise ValueError("No Key?")
 
 

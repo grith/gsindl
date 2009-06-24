@@ -27,7 +27,7 @@ from M2Crypto.util import no_passphrase_callback
 class Getpget(object):
     """Class to allow m2crypto compat with the key class"""
     def __get__(self, obj, objtype):
-        return obj._key.pkey
+        return obj._pubkey.pkey
 
 
 class Key:
@@ -44,16 +44,16 @@ class Key:
             else:
                 raise ValueError("WTF")
         else:
-            self._key = EVP.PKey()
-            self._rsakey = RSA.gen_key(keySize, m2.RSA_F4)
-            self._key.assign_rsa(self._rsakey)
+            self._pubkey = EVP.PKey()
+            self._key = RSA.gen_key(keySize, m2.RSA_F4)
+            self._pubkey.assign_rsa(self._key)
+
 
     pkey = Getpget()
 
-    #def as_pem(self, cypher='aes_128_cbc', callback=no_passphrase_callback)
+
     def __str__(self):
-        buf = BIO.MemoryBuffer()
-        m2.rsa_write_pub_key(k._key.rsa, buf._ptr())
-        return buf.read_all()
-        return self._key.as_pem(cipher=None)
+        bio = BIO.MemoryBuffer()
+        self._key.save_key_bio(bio, cipher=None)
+        return bio.read()
 
