@@ -28,14 +28,14 @@ PCI_VALUE_LIMITED = "critical, language:1.3.6.1.4.1.3536.1.1.1.9"
 
 
 class ProxyCertificate:
-    def __init__(self, certificate, full=True):
+    def __init__(self, certificate, proxykey=None, full=True):
         if isinstance(certificate, Certificate):
             self._certificate = certificate
         else:
             self._certificate = Certificate(certificate)
         self._full = full
 
-        self._proxy = Certificate()
+        self._proxy = Certificate(key=proxykey)
 
         self._proxy.set_version(2)
         self._proxy.set_serial_number()
@@ -60,7 +60,6 @@ class ProxyCertificate:
             self._proxycert.add_extension({'name': "proxyCertInfo",
                                            'value': PCI_VALUE_LIMITED,
                                            'critical': 1})
-        return
 
     def _fix_key_usage(self, values):
         """
@@ -89,5 +88,8 @@ class ProxyCertificate:
 
     def __repr__(self):
         return self._proxy.__repr__()
+
+    def as_der(self):
+        return self._proxy._certificate.as_der()
 
 

@@ -40,7 +40,9 @@ class Key:
                 bio = BIO.File(keyfile)
                 key = RSA.load_key_bio(bio, self._passphrase_callback)
 
+                self._pubkey = EVP.PKey()
                 self._key = key
+                self._pubkey.assign_rsa(self._key)
             else:
                 raise ValueError("WTF")
         else:

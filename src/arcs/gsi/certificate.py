@@ -24,6 +24,7 @@ import logging
 import struct, time
 from key import Key
 from util import _build_name_from_string
+from M2Crypto.util import no_passphrase_callback
 
 log = logging.getLogger('arcs.gsi')
 
@@ -44,13 +45,13 @@ multi_attrs = {'keyusage': {'digitalsignature': 'Digital Signature',
 
 
 class CertificateRequest:
-    def __init__(self, request=None, dn=None, keySize=2048,
-                 key=None, extensions=None):
+    def __init__(self, request=None, path=None, dn=None,
+                 keySize=2048, key=None, extensions=None):
 
         self.signed = False
 
         # Create public key object
-        if key:
+        if key and not request:
             self._key = key
         else:
             self._key = Key(keySize=keySize)
@@ -58,10 +59,30 @@ class CertificateRequest:
         # Create certificate._request
         if request:
             self._request = request
+            if isinstance(request, str):
+                if request.startswith("-----BEGIN CERTIFICATE REQUEST-----"):
+                    bio = BIO.MemoryBuffer(request)
+                    cptr = m2.x509_req_read_pem(bio._ptr())
+                    if cptr is None:
+                        raise X509.X509Error(Err.get_error())
+                    self._request = X509.Request(cptr, _pyfree=1)
+                elif ord(request[0]) == 48:
+                    bio = BIO.MemoryBuffer(request)
+                    cptr = m2.d2i_x509_req(bio._ptr())
+                    if cptr is None:
+                        raise X509.X509Error(Err.get_error())
+                    self._request = X509.Request(cptr, _pyfree=1)
+                elif path.exists(request):
+                    reqfile = open(request)
+                    bio = BIO.File(reqfile)
+                    self._request = X509.load_request_bio(bio)
+                else:
+                    raise ValueError('WFT')
         else:
             self._request = X509.Request()
-        self._request.set_pubkey(self._key)
-        self._request.set_version(0)
+            self._request.set_pubkey(self._key)
+            self._request.set_version(0)
+            self.sign()
 
         if dn:
             self.set_dn(dn)
@@ -69,7 +90,6 @@ class CertificateRequest:
         if extensions:
             self.add_extensions(extensions)
 
-        self.sign()
 
 
     def set_dn(self, dn):
@@ -131,7 +151,11 @@ class CertificateRequest:
 
 
 class Certificate:
-    def __init__(self, certificate=None, key=None):
+    def __init__(self, certificate=None, key=None,
+                 callback=no_passphrase_callback):
+        if key:
+            self._key = Key(key, callback=callback)
+
         if isinstance(certificate, str):
             if certificate.startswith("-----BEGIN CERTIFICATE-----"):
                 self._certificate = X509.load_cert_string(str(certificate),
@@ -147,7 +171,9 @@ class Certificate:
             if not key:
                 key = Key()
             self._key = key
-            self.set_pubkey(key)
+
+        if self._key:
+            self.set_pubkey(self._key)
 
 
     def set_version(self, version):
@@ -174,6 +200,7 @@ class Certificate:
 
         self._signed = False
 
+
     def add_extension(self, e):
         sslower = lambda s: s.lower().replace(' ','')
         name = e['name']
@@ -195,6 +222,7 @@ class Certificate:
         else:
             raise ValueError('WFT')
 
+
     def set_times(self):
         valid=(12, 0)
         not_before = ASN1.ASN1_UTCTIME()
@@ -204,6 +232,7 @@ class Certificate:
         not_after.set_time(int(time.time()) + offset )
         self._certificate.set_not_before(not_before)
         self._certificate.set_not_after(not_after)
+
 
     def set_serial_number(self):
         message_digest = EVP.MessageDigest('sha1')
@@ -262,4 +291,7 @@ class Certificate:
 
     def __repr__(self):
         return self._certificate.as_pem()
+
+    def as_der(self):
+        return self._certificate.as_der()
 
