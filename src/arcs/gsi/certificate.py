@@ -114,6 +114,9 @@ class CertificateRequest:
     def get_key(self):
         return self._key
 
+    def get_pubkey(self):
+        return self._request.get_pubkey()
+
     def as_dict(sefl):
         c = {}
         c['version'] = self._request.get_version()
@@ -247,7 +250,7 @@ class Certificate:
         return self._certificate.get_pubkey()
 
 
-    def get_privkey(self):
+    def get_key(self):
         if self._key:
             return self._certificate._key
         raise ValueError("No Key?")

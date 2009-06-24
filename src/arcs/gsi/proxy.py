@@ -80,7 +80,7 @@ class ProxyCertificate:
 
 
     def sign(self, md='sha1'):
-        self._proxy.sign(self._certificate._key, md)
+        self._proxy.sign(self._certificate.get_key(), md)
 
 
     def __str__(self):
