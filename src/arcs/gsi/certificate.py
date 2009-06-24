@@ -18,112 +18,245 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from M2Crypto import X509, RSA, EVP, m2
+from M2Crypto import X509, RSA, EVP, m2, BIO, ASN1
+from os import path
 import logging
+import struct, time
+from key import Key
+from util import _build_name_from_string
 
 log = logging.getLogger('arcs.gsi')
-
-MBSTRING_ASC  = 0x1000 | 1
 
 Att_map = {'extendedkeyusage': 'extendedKeyUsage',
            'keyusage': 'keyUsage',
            'certificatepolicies': 'certificatePolicies',
            'subjectaltname': 'subjectAltName',
+           'proxycertinfo': 'proxyCertInfo',
           }
 
-multi_attrs = { 'keyusage': { 'digitalsignature' : 'Digital Signature',
-                            'keyencipherment' : 'Key Encipherment',
-                           }
-              , 'extendedkeyusage' : { 'clientauth' : 'clientAuth', }
+multi_attrs = {'keyusage': {'digitalsignature': 'Digital Signature',
+                            'keyencipherment': 'Key Encipherment',
+                            'dataencipherment': 'Data Encipherment',
+                            }
+               ,'extendedkeyusage': {'clientauth': 'clientAuth',
+                                     }
               }
 
 
 class CertificateRequest:
-    def __init__(self, dn=None, keySize=2048, privateKey=None, publicKey=None,
-                 certificateRequest=None, extensions=None):
+    def __init__(self, request=None, dn=None, keySize=2048,
+                 key=None, extensions=None):
 
         self.signed = False
 
-        # Generate keys
-        log.info('Generating Key')
-        if privateKey:
-            self._privateKey = privateKey
-        else:
-            self._privateKey = RSA.gen_key(keySize, m2.RSA_F4)
-
         # Create public key object
-        if publicKey:
-            self._publicKey = publicKey
+        if key:
+            self._key = key
         else:
-            self._publicKey = EVP.PKey()
-        self._publicKey.assign_rsa(self._privateKey)
+            self._key = Key(keySize=keySize)
 
-        # Create certificate request
-        if certificateRequest:
-            self._certificateRequest = certificateRequest
+        # Create certificate._request
+        if request:
+            self._request = request
         else:
-            self._certificateRequest = X509.Request()
-        self._certificateRequest.set_pubkey(self._publicKey)
-        self._certificateRequest.set_version(0)
+            self._request = X509.Request()
+        self._request.set_pubkey(self._key)
+        self._request.set_version(0)
 
         if dn:
-            self.setDN(dn)
+            self.set_dn(dn)
 
         if extensions:
-            self.setExtensions(extensions)
+            self.add_extensions(extensions)
 
         self.sign()
 
 
-    def setDN(self, dn):
-        x509Name = X509.X509_Name()
-        for entry in dn.split(','):
-            l = entry.split("=")
-            x509Name.add_entry_by_txt(field=str(l[0].strip()), type=MBSTRING_ASC,
-                                          entry=str(l[1]),len=-1, loc=-1, set=0)
-
-        self._certificateRequest.set_subject_name(x509Name)
+    def set_dn(self, dn):
+        if isinstance(dn, X509.X509_Name):
+            self._request.set_subject_name(dn)
+        elif isinstance(dn, str):
+            self._request.set_subject_name(_build_name_from_string(dn))
+        else:
+            raise ValueError('WFT')
         self._signed = False
 
 
-    def setExtensions(self, extensions):
+    def add_extensions(self, extensions):
         extstack = X509.X509_Extension_Stack()
+
+        sslower = lambda s: s.lower().replace(' ','')
+
         for e in extensions:
             name = e['name']
+            key = sslower(name)
             critical = e['critical']
-            if name.lower() in multi_attrs:
-                e['value'] = ', '.join([multi_attrs[name.lower()][v.lower()]
+            if key in multi_attrs:
+                e['value'] = ', '.join([multi_attrs[key][sslower(v)]
                                for v in e['value'].split(',')])
-            extstack.push(X509.new_extension(Att_map[name.lower()],
+            extstack.push(X509.new_extension(Att_map[key],
                                              e['value'],
                                              critical=int(critical)))
-        self._certificateRequest.add_extensions(extstack)
+        self._request.add_extensions(extstack)
         self._signed = False
 
 
-    def sign(self):
-        self._certificateRequest.sign(self._publicKey, 'sha1')
+    def sign(self, md='sha1'):
+        self._request.sign(self._key, md)
         self._signed = True
 
 
-    def getCertificateRequest(self):
+    def get_cert_req(self):
         if not self._signed:
             self.sign()
-        return self._certificateRequest
+        return self._request
 
+    def get_key(self):
+        return self._key
 
-    def getPrivateKey(self):
-        return self._privateKey
-
-
-    def getPublicKey(self):
-        return self._publicKey
-
+    def as_dict(sefl):
+        c = {}
+        c['version'] = self._request.get_version()
+        c['subject'] = self._request.get_subject().as_text()
 
     def __str__(self):
-        return self._certificateRequest.as_text()
+        return self._request.as_text()
 
 
     def __repr__(self):
-        return self._certificateRequest.as_pem()
+        return self._request.as_pem()
+
+
+class Certificate:
+    def __init__(self, certificate=None, key=None):
+        if isinstance(certificate, str):
+            if certificate.startswith("-----BEGIN CERTIFICATE-----"):
+                self._certificate = X509.load_cert_string(str(certificate),
+                                                          X509.FORMAT_PEM)
+            elif path.exists(certificate):
+                certfile = open(certificate)
+                bio = BIO.File(certfile)
+                self._certificate = X509.load_cert_bio(bio)
+            else:
+                raise ValueError("WTF")
+        else:
+            self._certificate = X509.X509()
+            if not key:
+                key = Key()
+            self._key = key
+            self.set_pubkey(key)
+
+
+    def set_version(self, version):
+        self._certificate.set_version(version)
+
+
+    def get_dn(self):
+        return self.get_subject().as_text()
+
+
+    def set_dn(self, dn):
+        if isinstance(dn, X509.X509_Name):
+            self._certificate.set_subject_name(dn)
+        elif isinstance(dn, str):
+            self._certificate.set_subject_name(_build_name_from_string(dn))
+        else:
+            raise ValueError('WFT')
+
+
+    def add_extensions(self, extensions):
+
+        for e in extensions:
+            self.add_extension(e)
+
+        self._signed = False
+
+    def add_extension(self, e):
+        sslower = lambda s: s.lower().replace(' ','')
+        name = e['name']
+        key = sslower(name)
+        critical = e['critical']
+        if key in multi_attrs:
+            e['value'] = ', '.join([multi_attrs[key][sslower(v)]
+                           for v in e['value'].split(',')])
+        self._certificate.add_ext(X509.new_extension(Att_map[key],
+                                         e['value'],
+                                         critical=int(critical)))
+
+
+    def set_issuer_name(self, name):
+        if isinstance(name, X509.X509_Name):
+            self._certificate.set_issuer_name(name)
+        elif isinstance(name, str):
+            self._certificate.set_issuer_name(_build_name_from_string(name))
+        else:
+            raise ValueError('WFT')
+
+    def set_times(self):
+        valid=(12, 0)
+        not_before = ASN1.ASN1_UTCTIME()
+        not_after = ASN1.ASN1_UTCTIME()
+        not_before.set_time(0)
+        offset = (valid[0] * 3600) + (valid[1] * 60)
+        not_after.set_time(int(time.time()) + offset )
+        self._certificate.set_not_before(not_before)
+        self._certificate.set_not_after(not_after)
+
+    def set_serial_number(self):
+        message_digest = EVP.MessageDigest('sha1')
+        pubkey = self.get_pubkey()
+        der_encoding = pubkey.as_der()
+        message_digest.update(der_encoding)
+        digest = message_digest.final()
+        digest_tuple = struct.unpack('BBBB', digest[:4])
+        sub_hash = long(digest_tuple[0] + (digest_tuple[1] + ( digest_tuple[2] +
+                               ( digest_tuple[3] >> 1) * 256 ) * 256) * 256)
+        self._certificate.set_serial_number(sub_hash)
+
+
+    def sign(self, key, md='sha1'):
+        self._certificate.sign(key, md)
+
+
+    def set_pubkey(self, pubkey):
+        self._certificate.set_pubkey(pubkey)
+
+
+    def get_ext(self, extension):
+        """Get X509 extension by name"""
+        return self._certificate.get_ext(extension)
+
+
+    def get_serial_number(self):
+        return self._certificate.get_serial_number()
+
+
+    def get_issuer(self):
+        return self._certificate.get_issuer()
+
+
+    def get_version(self):
+        return self._certificate.get_version()
+
+
+    def get_subject(self):
+        return self._certificate.get_subject()
+
+
+    def get_pubkey(self):
+        return self._certificate.get_pubkey()
+
+
+    def get_privkey(self):
+        if self._key:
+            return self._certificate._key
+        raise ValueError("No Key?")
+
+
+    def __str__(self):
+        return self._certificate.as_text()
+
+
+    def __repr__(self):
+        return self._certificate.as_pem()
 

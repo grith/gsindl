@@ -1,5 +1,5 @@
 
-__all__ = ['certificate']
+__all__ = ['certificate', 'proxy', 'key']
 
-import certificate
+import certificate, proxy, key
 
