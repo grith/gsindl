@@ -227,7 +227,7 @@ class Certificate:
         valid=(hours, 0)
         not_before = ASN1.ASN1_UTCTIME()
         not_after = ASN1.ASN1_UTCTIME()
-        not_before.set_time(time.time())
+        not_before.set_time(int(time.time()))
         offset = (valid[0] * 3600) + (valid[1] * 60)
         not_after.set_time(int(time.time()) + offset )
         self._certificate.set_not_before(not_before)
