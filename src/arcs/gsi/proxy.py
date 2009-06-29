@@ -40,7 +40,7 @@ class ProxyCertificate:
         self._proxy.set_version(2)
         self._proxy.set_serial_number()
         self._proxy.set_dn(self._certificate.get_subject().as_text() + ', CN=' + str(self._proxy.get_serial_number()))
-        self._proxy.set_times()
+        self._proxy.set_times(hours=12)
         self._proxy.set_issuer_name(self._certificate.get_subject())
 
         try:
