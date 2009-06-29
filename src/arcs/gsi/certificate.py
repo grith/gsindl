@@ -223,13 +223,15 @@ class Certificate:
             raise ValueError('WFT')
 
 
-    def set_times(self, hours=12):
-        valid=(hours, 0)
+    def set_times(self, lifetime=43200):
+        """ 
+        Sets the lifetime of the certificate
+        Defaults to 12 days
+        """
         not_before = ASN1.ASN1_UTCTIME()
         not_after = ASN1.ASN1_UTCTIME()
         not_before.set_time(int(time.time()))
-        offset = (valid[0] * 3600) + (valid[1] * 60)
-        not_after.set_time(int(time.time()) + offset )
+        not_after.set_time(int(time.time()) + lifetime )
         self._certificate.set_not_before(not_before)
         self._certificate.set_not_after(not_after)
 
