@@ -57,7 +57,7 @@ class ProxyCertificate:
                                        'value': PCI_VALUE_FULL,
                                        'critical': 1})
         else:
-            self._proxycert.add_extension({'name': "proxyCertInfo",
+            self._proxy.add_extension({'name': "proxyCertInfo",
                                            'value': PCI_VALUE_LIMITED,
                                            'critical': 1})
 
