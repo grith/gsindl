@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title> &mdash; arcs-gsi v1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="arcs-gsi v1.0 documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../index.html">arcs-gsi v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <span class="target" id="module-arcs.gsi.certificate"></span><dl class="class">
+<dt id="arcs.gsi.certificate.CertificateRequest">
+<!--[arcs.gsi.certificate.CertificateRequest]-->class <tt class="descclassname">arcs.gsi.certificate.</tt><tt class="descname">CertificateRequest</tt><big>(</big><em>request=None</em>, <em>path=None</em>, <em>dn=None</em>, <em>keySize=2048</em>, <em>key=None</em>, <em>extensions=None</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.add_extensions">
+<!--[arcs.gsi.certificate.CertificateRequest.add_extensions]--><tt class="descname">add_extensions</tt><big>(</big><em>extensions</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.add_extensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.as_dict">
+<!--[arcs.gsi.certificate.CertificateRequest.as_dict]--><tt class="descname">as_dict</tt><big>(</big><em>sefl</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.get_cert_req">
+<!--[arcs.gsi.certificate.CertificateRequest.get_cert_req]--><tt class="descname">get_cert_req</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.get_cert_req" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.get_key">
+<!--[arcs.gsi.certificate.CertificateRequest.get_key]--><tt class="descname">get_key</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.get_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.get_pubkey">
+<!--[arcs.gsi.certificate.CertificateRequest.get_pubkey]--><tt class="descname">get_pubkey</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.get_pubkey" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.set_dn">
+<!--[arcs.gsi.certificate.CertificateRequest.set_dn]--><tt class="descname">set_dn</tt><big>(</big><em>dn</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.set_dn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.CertificateRequest.sign">
+<!--[arcs.gsi.certificate.CertificateRequest.sign]--><tt class="descname">sign</tt><big>(</big><em>md='sha1'</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.CertificateRequest.sign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcs.gsi.certificate.Certificate">
+<!--[arcs.gsi.certificate.Certificate]-->class <tt class="descclassname">arcs.gsi.certificate.</tt><tt class="descname">Certificate</tt><big>(</big><em>certificate=None</em>, <em>key=None</em>, <em>callback=&lt;function no_passphrase_callback at 0x98b702c&gt;</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.add_extension">
+<!--[arcs.gsi.certificate.Certificate.add_extension]--><tt class="descname">add_extension</tt><big>(</big><em>e</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.add_extension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.add_extensions">
+<!--[arcs.gsi.certificate.Certificate.add_extensions]--><tt class="descname">add_extensions</tt><big>(</big><em>extensions</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.add_extensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.as_der">
+<!--[arcs.gsi.certificate.Certificate.as_der]--><tt class="descname">as_der</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.as_der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_dn">
+<!--[arcs.gsi.certificate.Certificate.get_dn]--><tt class="descname">get_dn</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_dn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_ext">
+<!--[arcs.gsi.certificate.Certificate.get_ext]--><tt class="descname">get_ext</tt><big>(</big><em>extension</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_ext" title="Permalink to this definition">¶</a></dt>
+<dd>Get X509 extension by name</dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_issuer">
+<!--[arcs.gsi.certificate.Certificate.get_issuer]--><tt class="descname">get_issuer</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_issuer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_key">
+<!--[arcs.gsi.certificate.Certificate.get_key]--><tt class="descname">get_key</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_pubkey">
+<!--[arcs.gsi.certificate.Certificate.get_pubkey]--><tt class="descname">get_pubkey</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_pubkey" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_serial_number">
+<!--[arcs.gsi.certificate.Certificate.get_serial_number]--><tt class="descname">get_serial_number</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_serial_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_subject">
+<!--[arcs.gsi.certificate.Certificate.get_subject]--><tt class="descname">get_subject</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_subject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.get_version">
+<!--[arcs.gsi.certificate.Certificate.get_version]--><tt class="descname">get_version</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.get_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.set_dn">
+<!--[arcs.gsi.certificate.Certificate.set_dn]--><tt class="descname">set_dn</tt><big>(</big><em>dn</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.set_dn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.set_issuer_name">
+<!--[arcs.gsi.certificate.Certificate.set_issuer_name]--><tt class="descname">set_issuer_name</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.set_issuer_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.set_pubkey">
+<!--[arcs.gsi.certificate.Certificate.set_pubkey]--><tt class="descname">set_pubkey</tt><big>(</big><em>pubkey</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.set_pubkey" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.set_serial_number">
+<!--[arcs.gsi.certificate.Certificate.set_serial_number]--><tt class="descname">set_serial_number</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.set_serial_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.set_times">
+<!--[arcs.gsi.certificate.Certificate.set_times]--><tt class="descname">set_times</tt><big>(</big><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.set_times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.set_version">
+<!--[arcs.gsi.certificate.Certificate.set_version]--><tt class="descname">set_version</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.set_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcs.gsi.certificate.Certificate.sign">
+<!--[arcs.gsi.certificate.Certificate.sign]--><tt class="descname">sign</tt><big>(</big><em>key</em>, <em>md='sha1'</em><big>)</big><a class="headerlink" href="#arcs.gsi.certificate.Certificate.sign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/ref/certificate.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="../index.html">arcs-gsi v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Russell Sim, Sam Morrison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+    </div>
+  </body>
+</html>
