@@ -6,8 +6,8 @@ version = '1.0'
 setup(name='arcs.gsi',
       version=version,
       description="",
-      long_description=open(os.path.join("docs", "README.txt")).read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+      long_description=open(os.path.join("README")).read() + "\n" +
+                       open(os.path.join("CHANGES")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Programming Language :: Python",
