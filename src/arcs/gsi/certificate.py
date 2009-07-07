@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from M2Crypto import X509, RSA, EVP, m2, BIO, ASN1
+from M2Crypto import X509, EVP, m2, BIO, ASN1, Err
 from os import path
 import logging
 import struct, time
@@ -136,7 +136,7 @@ class CertificateRequest:
     def get_pubkey(self):
         return self._request.get_pubkey()
 
-    def as_dict(sefl):
+    def as_dict(self):
         c = {}
         c['version'] = self._request.get_version()
         c['subject'] = self._request.get_subject().as_text()

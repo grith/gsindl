@@ -20,7 +20,6 @@
 #############################################################################
 
 from certificate import Certificate
-from key import Key
 
 
 PCI_VALUE_FULL = "critical, language:Inherit all"

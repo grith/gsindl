@@ -23,6 +23,9 @@ from M2Crypto import X509
 MBSTRING_ASC  = 0x1000 | 1
 
 def _build_name_from_string(dn):
+    """"
+    Turns a DN from a string to a X509.X509_Name
+    """
     x509Name = X509.X509_Name()
     splitchar = ','
     if dn.startswith('/'):
