@@ -82,7 +82,6 @@ class CertificateRequest:
             self._request = X509.Request()
             self._request.set_pubkey(self._key)
             self._request.set_version(0)
-            self.sign()
 
         if dn:
             self.set_dn(dn)
@@ -224,7 +223,7 @@ class Certificate:
 
 
     def set_times(self, lifetime=43200):
-        """ 
+        """
         Sets the lifetime of the certificate
         Defaults to 12 days
         """
