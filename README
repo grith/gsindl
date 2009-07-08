@@ -1,11 +1,12 @@
-Introduction
-============
+Detailed Documentation
+======================
 
 This library provides some utility classes and functions for deailing with X509 certificates. Most of the tasks performed by these classes are trivial but they require use of the M2Crypto classes which can be a pain. The problem isn't that the M2Crypto classes are complex, it just that when doing GSI tasks i find myself repeating work in different projects.
 
 >>> import arcs.gsi.certificate
 >>> r = arcs.gsi.certificate.CertificateRequest()
 >>> r.set_dn("DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim")
+>>> r.sign()
 >>> print r.get_cert_req().as_text()
 Certificate Request:
     Data:
@@ -26,6 +27,7 @@ Certificate Request:
 Generating a request with a 1024 bit key for compatablity with older applications.
 
 >>> r = arcs.gsi.certificate.CertificateRequest(dn="DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim", keySize=1024)
+>>> r.sign()
 >>> print r
 Certificate Request:
     Data:
@@ -44,6 +46,7 @@ Certificate Request:
 <BLANKLINE>
 
 It's easier to access a certificate without needing to introspect M2Crypto to figure out the calls.
+
 >>> r
 -----BEGIN CERTIFICATE REQUEST-----
 ...
@@ -53,7 +56,9 @@ It's easier to access a certificate without needing to introspect M2Crypto to fi
 >>> r = arcs.gsi.certificate.CertificateRequest(dn="DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim", keySize=1024)
 
 Extensions are passed in as a list of dictionarys.
+
 >>> r.add_extensions([{'critical': False, 'name': 'ExtendedKeyUsage', 'value': 'clientAuth'}, {'critical': True, 'name': 'KeyUsage', 'value': 'Digital Signature, Key Encipherment'}, {'critical': False, 'name': 'CertificatePolicies', 'value': '1.3.6.1.4.1.31863.1.0.1'}, {'critical': False, 'name': 'SubjectAltName', 'value': 'email:russell@vpac.org'}])
+>>> r.sign()
 >>> print r
 Certificate Request:
     Data:
@@ -80,8 +85,8 @@ Certificate Request:
     ...
 <BLANKLINE>
 
-
 Creating a certificate, currently this can't be done from a request because there are no methods to extract the extensions from a request.
+
 >>> c = arcs.gsi.certificate.Certificate()
 >>> c.set_dn("DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim")
 >>> c.add_extensions([{'critical': False, 'name': 'ExtendedKeyUsage', 'value': 'clientAuth'}, {'critical': True, 'name': 'KeyUsage', 'value': 'Digital Signature, Key Encipherment'}, {'critical': False, 'name': 'CertificatePolicies', 'value': '1.3.6.1.4.1.31863.1.0.1'}, {'critical': False, 'name': 'SubjectAltName', 'value': 'email:russell@vpac.org'}])
@@ -93,6 +98,7 @@ Creating a certificate, currently this can't be done from a request because ther
 >>> c.sign(k)
 
 Creating a proxy certificate.
+
 >>> p = arcs.gsi.proxy.ProxyCertificate(c)
 >>> p.sign()
 >>> print p

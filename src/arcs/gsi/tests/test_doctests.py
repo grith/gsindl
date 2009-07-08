@@ -52,6 +52,7 @@ def doc_suite(test_dir, setUp=setUp, tearDown=tearDown, globs=None):
         sys.path.append(package_dir)
 
     docs = []
+    docs.append(os.path.join(package_dir, 'README'))
     for dir_ in ('docs',):
         doctest_dir = os.path.join(package_dir, dir_)
 
