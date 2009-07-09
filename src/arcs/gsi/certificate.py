@@ -92,6 +92,11 @@ class CertificateRequest:
 
 
     def set_dn(self, dn):
+        """
+        set the dn of the certificate request
+        takes either a string or an X509_Name object
+        """
+
         if isinstance(dn, X509.X509_Name):
             self._request.set_subject_name(dn)
         elif isinstance(dn, str):
@@ -102,6 +107,13 @@ class CertificateRequest:
 
 
     def add_extensions(self, extensions):
+        """
+        add extenstions to the certificate. Takes a list of dictionary and
+        converts them into extension objects.
+
+        e.g.
+        [{'name':'subjectAltName' ,'critical':0, 'value':'russell@vpac.org'}]
+        """
         extstack = X509.X509_Extension_Stack()
 
         sslower = lambda s: s.lower().replace(' ','')
@@ -126,20 +138,25 @@ class CertificateRequest:
 
 
     def get_cert_req(self):
+        """return the certificate request object"""
         if not self._signed:
             self.sign()
         return self._request
 
     def get_key(self):
+        """return the private key pair"""
         return self._key
 
     def get_pubkey(self):
+        """return the public key from the certificate request"""
         return self._request.get_pubkey()
 
     def as_dict(self):
+        """return the dictionary representation of the certificate request"""
         c = {}
         c['version'] = self._request.get_version()
         c['subject'] = self._request.get_subject().as_text()
+        # XXX Needs to return the extensions too.
 
     def __str__(self):
         return self._request.as_text()
