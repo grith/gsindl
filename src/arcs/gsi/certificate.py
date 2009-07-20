@@ -252,6 +252,12 @@ class Certificate:
         self._certificate.set_not_before(not_before)
         self._certificate.set_not_after(not_after)
 
+    def get_times(self):
+        """
+        Return tuple containing not before and not after times
+        """
+        return (self._certificate.get_not_before(), self._certificate.get_not_after())
+
 
     def set_serial_number(self):
         message_digest = EVP.MessageDigest('sha1')
