@@ -169,6 +169,7 @@ class CertificateRequest:
 class Certificate:
     def __init__(self, certificate=None, key=None,
                  callback=no_passphrase_callback):
+        self._key = None
         if key:
             self._key = Key(key, callback=callback)
 
