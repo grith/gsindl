@@ -45,6 +45,16 @@ multi_attrs = {'keyusage': {'digitalsignature': 'Digital Signature',
 
 
 class CertificateRequest:
+    """This is a wrapper class for handling certificate request generation.
+
+    :param request: either a PEM :class:`str` a DER :class:`str`
+    :param path: the path to the certificate request file
+    :param key: if sepecified this will be wrapped in a :class:`~arcs.gsi.key.Key`
+    :param keySize: The size of the key to be generated (default 2048)
+    :param dn: the DN string of M2Crypto X509_Name
+    :param extensions: a :class:`list` of :class:`dict` objects containing extensions
+
+    """
     def __init__(self, request=None, path=None, dn=None,
                  keySize=2048, key=None, extensions=None):
 
@@ -94,7 +104,8 @@ class CertificateRequest:
     def set_dn(self, dn):
         """
         set the dn of the certificate request
-        takes either a string or an X509_Name object
+
+        :param dn: either a string or an X509_Name object
         """
 
         if isinstance(dn, X509.X509_Name):
@@ -111,8 +122,13 @@ class CertificateRequest:
         add extenstions to the certificate. Takes a list of dictionary and
         converts them into extension objects.
 
-        e.g.
-        [{'name':'subjectAltName' ,'critical':0, 'value':'russell@vpac.org'}]
+        :param extensions: a :class:`list` of :class:`dict` objects containing extensions
+
+        Example of adding an extension::
+
+            >>> import arcs.gsi.certificate
+            >>> r = arcs.gsi.certificate.CertificateRequest()
+            >>> r.add_extensions([{'name':'subjectAltName' ,'critical':0, 'value':'russell@vpac.org'}])
         """
         extstack = X509.X509_Extension_Stack()
 
@@ -133,6 +149,11 @@ class CertificateRequest:
 
 
     def sign(self, md='sha1'):
+        """
+        sign the certificate request, must be done to finiliaze the :class:`CertificateRequest`
+
+        :param md: the hash to use when signing the :class:`CertificateRequest`
+        """
         self._request.sign(self._key, md)
         self._signed = True
 

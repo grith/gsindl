@@ -1,5 +1,5 @@
-Detailed Documentation
-======================
+Introduction
+============
 
 This library provides some utility classes and functions for deailing with X509 certificates. Most of the tasks performed by these classes are trivial but they require use of the M2Crypto classes which can be a pain. The problem isn't that the M2Crypto classes are complex, it just that when doing GSI tasks i find myself repeating work in different projects.
 
@@ -85,6 +85,9 @@ Certificate Request:
     ...
 <BLANKLINE>
 
+Creating certificates
+---------------------
+
 Creating a certificate, currently this can't be done from a request because there are no methods to extract the extensions from a request.
 
 >>> c = arcs.gsi.certificate.Certificate()
@@ -97,7 +100,8 @@ Creating a certificate, currently this can't be done from a request because ther
 >>> k = arcs.gsi.key.Key()
 >>> c.sign(k)
 
-Creating a proxy certificate.
+Creating a proxy certificate
+----------------------------
 
 >>> p = arcs.gsi.proxy.ProxyCertificate(c)
 >>> p.sign()
@@ -128,6 +132,7 @@ Certificate:
     Signature Algorithm: sha1WithRSAEncryption
         ...
 <BLANKLINE>
+
 
 
 

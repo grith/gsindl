@@ -31,6 +31,13 @@ class Getpget(object):
 
 
 class Key:
+    """This is a wrapper class for handling key pair generation.
+
+    :param key: the :class:`str` or file path to the key
+    :param keySize: The size of the key to be generated (default 2048)
+    :param callback: a function that is called when outputting the key, it's used to encrypt the key before writing it.
+
+    """
     def __init__(self, key=None, keySize=2048, callback=no_passphrase_callback):
         self._passphrase_callback = callback
         if isinstance(key, str):
