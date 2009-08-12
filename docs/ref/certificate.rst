@@ -22,6 +22,6 @@
 
 .. seealso::
 
-    :class:`~arcs.gsi.key.Key`
+    Class :class:`~arcs.gsi.key.Key`
         a class that is used by the certificate classes to handle the key pairs
 

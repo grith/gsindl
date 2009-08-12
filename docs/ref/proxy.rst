@@ -16,9 +16,9 @@
 
 .. seealso::
 
-    :class:`~arcs.gsi.certificate.Certificate`
+    Class :class:`~arcs.gsi.certificate.Certificate`
         a class that is used to handle certificates
 
-    :class:`~arcs.gsi.key.Key`
+    Class :class:`~arcs.gsi.key.Key`
         a class that is used by the certificate classes to handle the key pairs
 
