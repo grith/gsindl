@@ -36,5 +36,14 @@ def _build_name_from_string(dn):
                                       entry=str(l[1]),len=-1, loc=-1, set=0)
     return x509Name
 
+def cert_time_diff(cert, date=None):
+    """
+    return the time until the certificate expires
+    takes a certificate and an optional datetime object, default is Now
+    """
+    time = cert.get_times()[1]
+    d1 = datetime.datetime.strptime(str(time), "%b %d %H:%M:%S %Y %Z")
+    d2 = date or datetime.datetime.now()
+    return d1 - d2
 
 
