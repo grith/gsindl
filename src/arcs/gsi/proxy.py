@@ -27,6 +27,13 @@ PCI_VALUE_LIMITED = "critical, language:1.3.6.1.4.1.3536.1.1.1.9"
 
 
 class ProxyCertificate:
+    """This is a wrapper class for handling proxy certificate generation.
+
+    :param request: if specified this will be wrapped in a :class:`~arcs.gsi.certificate.Certificate` object
+    :param proxykey: the key used to sign the proxy, if sepecified this will be wrapped in a :class:`~arcs.gsi.key.Key` object
+    :param full: whether this is a full proxy or not
+
+    """
     def __init__(self, certificate, proxykey=None, full=True):
         if isinstance(certificate, Certificate):
             self._certificate = certificate

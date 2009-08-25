@@ -52,13 +52,12 @@ def doc_suite(test_dir, setUp=setUp, tearDown=tearDown, globs=None):
         sys.path.append(package_dir)
 
     docs = []
-    docs.append(os.path.join(package_dir, 'README'))
     for dir_ in ('docs',):
         doctest_dir = os.path.join(package_dir, dir_)
 
         # filtering files on extension
         docs.extend([os.path.join(doctest_dir, doc) for doc in
-                     os.listdir(doctest_dir) if doc.endswith('.txt')])
+                     os.listdir(doctest_dir) if doc.endswith('.rst')])
     for test in docs:
         suite.append(doctest.DocFileSuite(test, optionflags=flags,
                                           globs=globs, setUp=setUp,

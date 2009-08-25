@@ -1,3 +1,6 @@
+import common
+__version__ = common.version
+del common
 
 __all__ = ['certificate', 'proxy', 'key']
 

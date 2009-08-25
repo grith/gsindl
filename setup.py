@@ -6,12 +6,13 @@ ex_req = []
 if not os.path.exists('/etc/redhat-release'):
     ex_req.append('M2Crypto')
 
-version = '1.1'
+# Get version from common file
+execfile('src/arcs/gsi/common.py')
 
 setup(name='arcs.gsi',
       version=version,
       description="Library to assist GSI authentication and certificate handling in python.",
-      long_description=open(os.path.join("README")).read() + "\n" +
+      long_description=".. contents::\n\n" + open(os.path.join("docs", "introduction.rst")).read() + "\n" +
                        open(os.path.join("CHANGES")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
