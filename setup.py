@@ -1,6 +1,11 @@
 from setuptools import setup, find_packages
 import os
 
+ex_req = []
+# a hack because redhat setuptools can't detect m2crypto
+if not os.path.exists('/etc/redhat-release'):
+    ex_req.append('M2Crypto')
+
 version = '1.1'
 
 setup(name='arcs.gsi',
@@ -30,9 +35,8 @@ setup(name='arcs.gsi',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'M2Crypto',
           # -*- Extra requirements: -*-
-      ],
+      ] + ex_req,
       entry_points="""
       # -*- Entry points: -*-
       """,
