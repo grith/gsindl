@@ -12,6 +12,7 @@ Contents:
    :numbered:
 
    introduction.rst
+   slcs.rst
    ref/certificate.rst
    ref/proxy.rst
    ref/key.rst
