@@ -1,4 +1,4 @@
-SLCS -- utility functions for assisting with responses from SLCS servers
+:mod:`~arcs.gsi.slcs` -- utility functions for assisting with responses from SLCS servers
 ========================================================================
 
 .. _ref-slcs
