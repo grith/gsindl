@@ -15,6 +15,7 @@ Contents:
    ref/certificate.rst
    ref/proxy.rst
    ref/key.rst
+   changes.rst
 
 Indices and tables
 ==================
