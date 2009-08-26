@@ -19,7 +19,13 @@
 #
 #############################################################################
 
+
 from M2Crypto import X509
+import datetime
+import logging
+
+log = logging.getLogger('arcs.gsi')
+
 MBSTRING_ASC  = 0x1000 | 1
 
 def _build_name_from_string(dn):
@@ -45,5 +51,4 @@ def cert_time_diff(cert, date=None):
     d1 = datetime.datetime.strptime(str(time), "%b %d %H:%M:%S %Y %Z")
     d2 = date or datetime.datetime.now()
     return d1 - d2
-
 
