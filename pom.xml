@@ -27,6 +27,13 @@
 			<artifactId>jythonLib</artifactId>
 			<version>2.5</version>
 		</dependency>
+		<dependency>
+			<groupId>au.org.arcs.auth</groupId>
+			<artifactId>arcs-shibboleth-client</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
