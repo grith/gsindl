@@ -20,10 +20,13 @@ public class SLCS {
 	
 	public Object parse_req_response(PyInstance response) {
 		
-        interpreter.exec("import arcs.gsi.slcs");
-//        interpreter.eval(s)
-        PyObject shibbolethClientClass = interpreter.get("slcs");
-        PyObject employeeObj = shibbolethClientClass.__call__();	
+        interpreter.exec("from arcs.gsi.slcs import parse_req_response");
+
+        interpreter.set("slcsResp", response);
+        interpreter.exec("token, dn, reqURL, elements = parse_req_response(slcsResp)");
+        
+        Object token = interpreter.get("token");
+        
 		
 		return null;
 	}
@@ -38,6 +41,10 @@ public class SLCS {
     	Shibboleth shib = new Shibboleth("https://slcs1.arcs.org.au/SLCS/login");
     	
     	PyInstance returnValue = shib.shibOpen(args[0], args[1].toCharArray(), "VPAC");
+    	
+    	SLCS slcs = new SLCS();
+    	
+    	slcs.parse_req_response(returnValue);
     	
     	Iterable<PyObject> it = returnValue.asIterable();
     	
