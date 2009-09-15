@@ -29,6 +29,7 @@ import org.bouncycastle.openssl.PEMWriter;
 import org.python.core.PyDictionary;
 import org.python.core.PyInstance;
 import org.python.core.PyList;
+import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
@@ -57,6 +58,24 @@ public class SLCS {
 
 		kpGen.initialize(1024, new SecureRandom());
 
+	}
+	
+	public String submitCertificateRequest(String pem) {
+		
+		interpreter.set("certreq", pem);
+		interpreter.exec("from urllib import urlencode");
+		interpreter.exec("import urllib2");
+		interpreter.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': repr(certreq)})");
+		Object obj = interpreter.get("data");
+		Object obj2 = interpreter.get("reqUrl");
+		interpreter.exec("certResp = urllib2.urlopen(reqURL, data)");
+		
+		interpreter.exec("cert = parse_cert_response(certResp)");
+		
+		PyObject cert = interpreter.get("cert");
+		
+		return null;
+		
 	}
 
 	public String createCertificateRequest(PyInstance response) {
@@ -215,6 +234,8 @@ public class SLCS {
 		String pem = slcs.createCertificateRequest(returnValue);
 		
 		System.out.println(pem);
+		
+		slcs.submitCertificateRequest(pem);
 
 //		Iterable<PyObject> it = returnValue.asIterable();
 //
