@@ -7,7 +7,7 @@ if not os.path.exists('/etc/redhat-release'):
     ex_req.append('M2Crypto')
 
 # Get version from common file
-execfile('src/arcs/gsi/common.py')
+execfile('src/main/python/arcs/gsi/common.py')
 
 setup(name='arcs.gsi',
       version=version,
@@ -30,8 +30,8 @@ setup(name='arcs.gsi',
       url='http://code.arcs.org.au/gitorious/arcs-gsi/arcs-gsi',
       download_url='http://code.arcs.org.au/pypi/simple/arcs.gsi/',
       license='GPL',
-      packages=find_packages('src', exclude=['ez_setup']),
-      package_dir = {'': 'src'},
+      packages=find_packages('src/main/python', exclude=['ez_setup']),
+      package_dir = {'': 'src/main/python'},
       namespace_packages=['arcs'],
       include_package_data=True,
       zip_safe=False,
