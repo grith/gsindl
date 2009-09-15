@@ -1,4 +1,6 @@
 from setuptools import setup, find_packages
+from xml.dom.minidom import parse
+from xml import xpath
 import os
 
 ex_req = []
@@ -7,7 +9,8 @@ if not os.path.exists('/etc/redhat-release'):
     ex_req.append('M2Crypto')
 
 # Get version from common file
-execfile('src/main/python/arcs/gsi/common.py')
+pom = parse('pom.xml')
+version = xpath.Evaluate('//project/version/text()', pom)[0].data.rstrip('-SNAPSHOT')
 
 setup(name='arcs.gsi',
       version=version,
