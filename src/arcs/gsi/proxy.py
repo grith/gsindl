@@ -19,6 +19,9 @@
 #
 #############################################################################
 
+from M2Crypto import EVP
+import struct
+
 from certificate import Certificate
 
 
@@ -44,7 +47,7 @@ class ProxyCertificate:
         self._proxy = Certificate(key=proxykey)
 
         self._proxy.set_version(2)
-        self._proxy.set_serial_number()
+        self.set_serial_number()
         self._proxy.set_dn(self._certificate.get_subject().as_text() + ', CN=' + str(self._proxy.get_serial_number()))
         self._proxy.set_times(lifetime=43200)
         self._proxy.set_issuer_name(self._certificate.get_subject())
@@ -82,6 +85,18 @@ class ProxyCertificate:
         if 'Data Encipherment' not in r:
             r.append('Data Encipherment')
         return ', '.join(r)
+
+
+    def set_serial_number(self):
+        message_digest = EVP.MessageDigest('sha1')
+        pubkey = self._proxy.get_pubkey()
+        der_encoding = pubkey.as_der()
+        message_digest.update(der_encoding)
+        digest = message_digest.final()
+        digest_tuple = struct.unpack('BBBB', digest[:4])
+        sub_hash = long(digest_tuple[0] + (digest_tuple[1] + ( digest_tuple[2] +
+                               ( digest_tuple[3] >> 1) * 256 ) * 256) * 256)
+        self._proxy._certificate.set_serial_number(sub_hash)
 
 
     def sign(self, md='sha1'):

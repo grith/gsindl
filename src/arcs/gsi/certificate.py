@@ -18,10 +18,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from M2Crypto import X509, EVP, m2, BIO, ASN1, Err
+from M2Crypto import X509, m2, BIO, ASN1, Err
 from os import path
 import logging
-import struct, time
+import time
 from key import Key
 from util import _build_name_from_string
 from M2Crypto.util import no_passphrase_callback
@@ -278,18 +278,6 @@ class Certificate:
         Return tuple containing not before and not after times
         """
         return (self._certificate.get_not_before(), self._certificate.get_not_after())
-
-
-    def set_serial_number(self):
-        message_digest = EVP.MessageDigest('sha1')
-        pubkey = self.get_pubkey()
-        der_encoding = pubkey.as_der()
-        message_digest.update(der_encoding)
-        digest = message_digest.final()
-        digest_tuple = struct.unpack('BBBB', digest[:4])
-        sub_hash = long(digest_tuple[0] + (digest_tuple[1] + ( digest_tuple[2] +
-                               ( digest_tuple[3] >> 1) * 256 ) * 256) * 256)
-        self._certificate.set_serial_number(sub_hash)
 
 
     def sign(self, key, md='sha1'):
