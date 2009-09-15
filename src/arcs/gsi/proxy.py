@@ -40,6 +40,8 @@ class ProxyCertificate:
     def __init__(self, certificate, proxykey=None, full=True):
         if isinstance(certificate, Certificate):
             self._certificate = certificate
+        elif isinstance(certificate, ProxyCertificate):
+            self._certificate = certificate._proxy
         else:
             self._certificate = Certificate(certificate)
         self._full = full
