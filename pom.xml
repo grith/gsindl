@@ -77,6 +77,27 @@
 							<goal>attached</goal>
 						</goals>
 					</execution>
+										<execution>
+						<phase>package</phase>
+						<configuration>
+							<descriptors>
+								<descriptor>arcs-gsi.withoutJython.assembly.xml</descriptor>
+							</descriptors>
+							<finalName>arcs-gsi</finalName>
+							<archive>
+								<index>true</index>
+								<manifest>
+									<mainClass>org.python.util.jython</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path>
+								</manifestEntries>
+							</archive>
+						</configuration>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
