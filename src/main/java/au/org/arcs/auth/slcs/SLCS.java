@@ -41,6 +41,7 @@ import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
 import au.org.arcs.auth.shibboleth.DummyIdpObject;
 import au.org.arcs.auth.shibboleth.IdpObject;
 import au.org.arcs.auth.shibboleth.Shibboleth;
+import au.org.arcs.auth.shibboleth.StaticIdpObject;
 
 public class SLCS {
 
@@ -236,6 +237,10 @@ public class SLCS {
 		}
 	}
 
+	public void init(String username, char[] password, String idpName) {
+		init(username, password, new StaticIdpObject(idpName));
+	}
+	
 	public void init(String username, char[] password, IdpObject idp) {
 
 		PyInstance returnValue = shib.shibOpen(username, password, idp);
