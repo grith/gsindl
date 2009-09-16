@@ -7,9 +7,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.Iterator;
 import java.util.Vector;
-
-import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -24,6 +23,7 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.asn1.x509.X509Extensions;
+import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.openssl.PEMWriter;
 import org.python.core.PyDictionary;
@@ -65,16 +65,27 @@ public class SLCS {
 		interpreter.set("certreq", pem);
 		interpreter.exec("from urllib import urlencode");
 		interpreter.exec("import urllib2");
-		interpreter.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': repr(certreq)})");
+		interpreter.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': certreq})");
 		Object obj = interpreter.get("data");
-		Object obj2 = interpreter.get("reqUrl");
+		Object obj2 = interpreter.get("reqURL");
 		interpreter.exec("certResp = urllib2.urlopen(reqURL, data)");
+
+//		PyInstance resp = (PyInstance)interpreter.get("certResp");
+//		
+//    	Iterable<PyObject> it = resp.asIterable();
+//    	
+//    	for ( Iterator i = it.iterator(); i.hasNext(); ) {
+//    		System.out.println(i.next());
+//    	}
+    	
+
 		
+		interpreter.exec("from arcs.gsi.slcs import parse_cert_response");
 		interpreter.exec("cert = parse_cert_response(certResp)");
 		
 		PyObject cert = interpreter.get("cert");
 		
-		return null;
+		return cert.asString();
 		
 	}
 
@@ -90,6 +101,10 @@ public class SLCS {
 		PyString dn = (PyString)interpreter.get("dn");
 		PyUnicode reqUrl = (PyUnicode)interpreter.get("reqURL");
 		PyList elObjects = (PyList)interpreter.get("elements");
+		
+		System.out.println("Token: "+token.asString());
+		System.out.println("Dn: "+dn.asString());
+		System.out.println("reqUrl: "+reqUrl.asString());
 		
 		PyDictionary[] elements = new PyDictionary[elObjects.size()];
 		
@@ -144,9 +159,10 @@ public class SLCS {
 				System.out.println("\tvalue: "+value);
 				
 				if ( "SubjectAltName".equals(name) ) {
-					
+					String email = value.substring(value.indexOf(":")+1);
+					System.out.println(email);
 					GeneralNames subjectAltName = new GeneralNames(
-			                   new GeneralName(GeneralName.rfc822Name, value));
+			                   new GeneralName(GeneralName.rfc822Name, value.substring(value.indexOf(":")+1)));
 					oids.add(X509Extensions.SubjectAlternativeName);
 					values.add(new X509Extension(critical, new DEROctetString(subjectAltName)));
 					
@@ -198,9 +214,12 @@ public class SLCS {
 
 			PKCS10CertificationRequest certRequest = null;
 			certRequest = new PKCS10CertificationRequest("SHA256withRSA",
-					new X500Principal(dn.asString()), pair
+					new X509Name(false, dn.asString()), pair
 							.getPublic(), new DERSet(attribute), pair
 							.getPrivate());
+			
+			System.out.println(certRequest.getCertificationRequestInfo().getSubject().toString());
+			
 
 			StringWriter writer = new StringWriter();
 			PEMWriter pemWrt = new PEMWriter(writer);
@@ -235,25 +254,11 @@ public class SLCS {
 		
 		System.out.println(pem);
 		
-		slcs.submitCertificateRequest(pem);
+		String cert = slcs.submitCertificateRequest(pem);
+		
+		System.out.println(cert);
 
-//		Iterable<PyObject> it = returnValue.asIterable();
-//
-//		for (Iterator i = it.iterator(); i.hasNext();) {
-//
-//			System.out.println(i.next());
-//
-//		}
-//
-//		returnValue = shib.open();
-//
-//		it = returnValue.asIterable();
-//
-//		for (Iterator i = it.iterator(); i.hasNext();) {
-//
-//			System.out.println(i.next());
-//
-//		}
+
 
 	}
 
