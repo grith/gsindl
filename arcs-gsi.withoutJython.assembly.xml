@@ -1,5 +1,5 @@
 <assembly>
-	<id>lib</id>
+	<id>lib-without-jython</id>
 	<formats>
 		<format>jar</format>
 	</formats>
