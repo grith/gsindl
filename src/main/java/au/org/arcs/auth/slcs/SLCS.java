@@ -1,13 +1,17 @@
 package au.org.arcs.auth.slcs;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.util.Iterator;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Vector;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -41,11 +45,22 @@ public class SLCS {
 
 	private PythonInterpreter interpreter = new PythonInterpreter();
 	private KeyPairGenerator kpGen = null;
+	
+	private PrivateKey privateKey = null;
+	private X509Certificate x509Cert = null;
 
-	public SLCS() {
+	private final Shibboleth shib;
+	
+	public SLCS(String url) {
 
 		Security
 				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		
+		java.security.Security.addProvider(new ArcsSecurityProvider());
+
+		java.security.Security.setProperty("ssl.TrustManagerFactory.algorithm",
+				"TrustAllCertificates");
+		
 		try {
 			kpGen = KeyPairGenerator.getInstance("RSA", "BC");
 		} catch (NoSuchAlgorithmException e) {
@@ -57,29 +72,19 @@ public class SLCS {
 		}
 
 		kpGen.initialize(1024, new SecureRandom());
+		
+		shib = new Shibboleth(url);
 
 	}
 	
-	public String submitCertificateRequest(String pem) {
+	private String submitCertificateRequest(String pem) {
 		
 		interpreter.set("certreq", pem);
 		interpreter.exec("from urllib import urlencode");
 		interpreter.exec("import urllib2");
 		interpreter.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': certreq})");
-		Object obj = interpreter.get("data");
-		Object obj2 = interpreter.get("reqURL");
 		interpreter.exec("certResp = urllib2.urlopen(reqURL, data)");
 
-//		PyInstance resp = (PyInstance)interpreter.get("certResp");
-//		
-//    	Iterable<PyObject> it = resp.asIterable();
-//    	
-//    	for ( Iterator i = it.iterator(); i.hasNext(); ) {
-//    		System.out.println(i.next());
-//    	}
-    	
-
-		
 		interpreter.exec("from arcs.gsi.slcs import parse_cert_response");
 		interpreter.exec("cert = parse_cert_response(certResp)");
 		
@@ -89,7 +94,7 @@ public class SLCS {
 		
 	}
 
-	public String createCertificateRequest(PyInstance response) {
+	private String createCertificateRequest(PyInstance response) {
 
 		interpreter.exec("from arcs.gsi.slcs import parse_req_response");
 
@@ -113,20 +118,12 @@ public class SLCS {
 		}
 
 		try {
-			KeyPair pair = kpGen.generateKeyPair();
 
-
-			Vector<DERObjectIdentifier> oids = new Vector<DERObjectIdentifier>();
-			Vector values = new Vector();
-
-//			GeneralNames subjectAltName = new GeneralNames(new GeneralName(
-//					GeneralName.rfc822Name, "test@test.test"));
-//
-//			oids.add(X509Extensions.SubjectAlternativeName);
-//			values.add(new X509Extension(false, new DEROctetString(
-//					subjectAltName)));
+			KeyPair pair = null;
+			pair = kpGen.generateKeyPair();
 			
-//			ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage(KeyPurposeId.id_kp_clientAuth);
+			Vector<DERObjectIdentifier> oids = new Vector<DERObjectIdentifier>();
+			Vector<X509Extension> values = new Vector<X509Extension>();
 			
 			for ( PyDictionary dic : elements ) {
 				
@@ -152,17 +149,16 @@ public class SLCS {
 				}
 				
 				
-				System.out.println("Set: ");
-				System.out.println("\tname: "+name);
-				System.out.println("\toid: "+oid);
-				System.out.println("\tcritical: "+critical);
-				System.out.println("\tvalue: "+value);
+//				System.out.println("Set: ");
+//				System.out.println("\tname: "+name);
+//				System.out.println("\toid: "+oid);
+//				System.out.println("\tcritical: "+critical);
+//				System.out.println("\tvalue: "+value);
 				
 				if ( "SubjectAltName".equals(name) ) {
 					String email = value.substring(value.indexOf(":")+1);
-					System.out.println(email);
 					GeneralNames subjectAltName = new GeneralNames(
-			                   new GeneralName(GeneralName.rfc822Name, value.substring(value.indexOf(":")+1)));
+			                   new GeneralName(GeneralName.rfc822Name, email));
 					oids.add(X509Extensions.SubjectAlternativeName);
 					values.add(new X509Extension(critical, new DEROctetString(subjectAltName)));
 					
@@ -218,7 +214,7 @@ public class SLCS {
 							.getPublic(), new DERSet(attribute), pair
 							.getPrivate());
 			
-			System.out.println(certRequest.getCertificationRequestInfo().getSubject().toString());
+			//System.out.println(certRequest.getCertificationRequestInfo().getSubject().toString());
 			
 
 			StringWriter writer = new StringWriter();
@@ -228,38 +224,56 @@ public class SLCS {
 			
 			writer.close();
 			
+			// persist the private key 
+			privateKey = pair.getPrivate();
+			
 			return writer.toString();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new RuntimeException("Could not create certificate request.", e);
 		}
 	}
 
+	public void init(String username, char[] password, String idp) {
+
+		PyInstance returnValue = shib.shibOpen(username, password, idp);
+
+		String pem = createCertificateRequest(returnValue);
+		
+		String cert = submitCertificateRequest(pem);
+		
+		try {
+			x509Cert = (X509Certificate)CertificateFactory.getInstance("X.509").generateCertificate( new ByteArrayInputStream( cert.getBytes() ));
+		} catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException("Could not create X509Certificate object.", e);
+		}
+
+	}
+	
+	public X509Certificate getCertificate() {
+		return x509Cert;
+	}
+	
+	public PrivateKey getPrivateKey() {
+		return privateKey;
+	}
+	
 	public static void main(String[] args) {
-
-		java.security.Security.addProvider(new ArcsSecurityProvider());
-
-		java.security.Security.setProperty("ssl.TrustManagerFactory.algorithm",
-				"TrustAllCertificates");
-
-		Shibboleth shib = new Shibboleth("https://slcs1.arcs.org.au/SLCS/login");
-
-		PyInstance returnValue = shib.shibOpen(args[0], args[1].toCharArray(),
-				"VPAC");
-
-		SLCS slcs = new SLCS();
-
-		String pem = slcs.createCertificateRequest(returnValue);
 		
-		System.out.println(pem);
+		String username = args[0];
+		String password = args[1];
+		String idp = args[2];
+		String url = "https://slcs1.arcs.org.au/SLCS/login";
 		
-		String cert = slcs.submitCertificateRequest(pem);
+		SLCS slcs = new SLCS(url);
 		
-		System.out.println(cert);
-
-
-
+		slcs.init(username, password.toCharArray(), idp);
+		
+		
+		
 	}
 
 }
