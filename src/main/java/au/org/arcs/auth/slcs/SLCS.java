@@ -39,6 +39,7 @@ import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
 
 import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
+import au.org.arcs.auth.shibboleth.IdpObject;
 import au.org.arcs.auth.shibboleth.Shibboleth;
 
 public class SLCS {
@@ -235,7 +236,7 @@ public class SLCS {
 		}
 	}
 
-	public void init(String username, char[] password, String idp) {
+	public void init(String username, char[] password, IdpObject idp) {
 
 		PyInstance returnValue = shib.shibOpen(username, password, idp);
 
@@ -265,12 +266,12 @@ public class SLCS {
 		
 		String username = args[0];
 		String password = args[1];
-		String idp = args[2];
+//		String idp = args[2];
 		String url = "https://slcs1.arcs.org.au/SLCS/login";
 		
 		SLCS slcs = new SLCS(url);
 		
-		slcs.init(username, password.toCharArray(), idp);
+		slcs.init(username, password.toCharArray(), new IdpObject());
 		
 		
 		
