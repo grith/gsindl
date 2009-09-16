@@ -39,6 +39,7 @@ import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
 
 import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
+import au.org.arcs.auth.shibboleth.DummyIdpObject;
 import au.org.arcs.auth.shibboleth.IdpObject;
 import au.org.arcs.auth.shibboleth.Shibboleth;
 
@@ -271,7 +272,7 @@ public class SLCS {
 		
 		SLCS slcs = new SLCS(url);
 		
-		slcs.init(username, password.toCharArray(), new IdpObject());
+		slcs.init(username, password.toCharArray(), new DummyIdpObject());
 		
 		
 		
