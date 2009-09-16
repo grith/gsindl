@@ -44,6 +44,8 @@ import au.org.arcs.auth.shibboleth.Shibboleth;
 import au.org.arcs.auth.shibboleth.StaticIdpObject;
 
 public class SLCS {
+	
+	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
 	private PythonInterpreter interpreter = new PythonInterpreter();
 	private KeyPairGenerator kpGen = null;
@@ -52,6 +54,10 @@ public class SLCS {
 	private X509Certificate x509Cert = null;
 
 	private final Shibboleth shib;
+	
+	public SLCS() {
+		this(DEFAULT_SLCS_URL);
+	}
 	
 	public SLCS(String url) {
 
