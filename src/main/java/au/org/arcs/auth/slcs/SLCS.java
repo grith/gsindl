@@ -245,8 +245,8 @@ public class SLCS {
 		String cert = submitCertificateRequest(pem);
 		
 		try {
-			x509Cert = (X509Certificate)CertificateFactory.getInstance("X.509").generateCertificate( new ByteArrayInputStream( cert.getBytes() ));
-		} catch (CertificateException e) {
+			x509Cert = (X509Certificate)CertificateFactory.getInstance("X.509", "BC").generateCertificate( new ByteArrayInputStream( cert.getBytes() ));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException("Could not create X509Certificate object.", e);
