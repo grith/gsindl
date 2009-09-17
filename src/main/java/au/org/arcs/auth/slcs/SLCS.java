@@ -115,10 +115,6 @@ public class SLCS {
 		PyUnicode reqUrl = (PyUnicode)interpreter.get("reqURL");
 		PyList elObjects = (PyList)interpreter.get("elements");
 		
-		System.out.println("Token: "+token.asString());
-		System.out.println("Dn: "+dn.asString());
-		System.out.println("reqUrl: "+reqUrl.asString());
-		
 		PyDictionary[] elements = new PyDictionary[elObjects.size()];
 		
 		for ( int i=0; i<elements.length; i++ ) {
