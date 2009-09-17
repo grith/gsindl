@@ -282,7 +282,7 @@ public class SLCS {
 		
 		SLCS slcs = new SLCS(url);
 		
-		slcs.init(username, password.toCharArray(), new DummyIdpObject());
+		slcs.init(username, password.toCharArray(), new StaticIdpObject("VPAC"));
 		
 		
 		
