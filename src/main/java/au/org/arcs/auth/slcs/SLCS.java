@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -34,17 +35,15 @@ import org.python.core.PyInstance;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
-import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
 
 import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
 import au.org.arcs.auth.shibboleth.CredentialManager;
 import au.org.arcs.auth.shibboleth.IdpObject;
+import au.org.arcs.auth.shibboleth.ShibListener;
 import au.org.arcs.auth.shibboleth.Shibboleth;
-import au.org.arcs.auth.shibboleth.StaticCredentialManager;
-import au.org.arcs.auth.shibboleth.StaticIdpObject;
 
-public class SLCS {
+public class SLCS implements ShibListener {
 	
 	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
@@ -56,7 +55,9 @@ public class SLCS {
 
 	private final Shibboleth shib;
 	
-	public SLCS(String username, String password) {
+	private PyInstance response;
+	
+	public SLCS(String url, IdpObject idp, CredentialManager cm) {
 
 		Security
 				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -77,11 +78,20 @@ public class SLCS {
 		}
 
 		kpGen.initialize(1024, new SecureRandom());
-		IdpObject idp = new StaticIdpObject("VPAC");
-		CredentialManager cm = new StaticCredentialManager(username, password);
-		shib = new Shibboleth(idp, cm);
 
+		shib = new Shibboleth(idp, cm);
+		shib.addShibListener(this);
+		shib.openurl(url);
 	}
+	
+	public void shibLoginComplete(PyInstance response) {
+
+		this.response = response;
+		
+		startSlcsRequest();
+		
+	}
+
 	
 	private String submitCertificateRequest(String pem) {
 		
@@ -108,9 +118,9 @@ public class SLCS {
 		interpreter
 				.exec("token, dn, reqURL, elements = parse_req_response(slcsResp)");
 
-		PyString token = (PyString)interpreter.get("token");
 		PyString dn = (PyString)interpreter.get("dn");
-		PyUnicode reqUrl = (PyUnicode)interpreter.get("reqURL");
+//		PyUnicode reqUrl = (PyUnicode)interpreter.get("reqURL");
+//		PyString token = (PyString)interpreter.get("token");
 		PyList elObjects = (PyList)interpreter.get("elements");
 		
 		PyDictionary[] elements = new PyDictionary[elObjects.size()];
@@ -236,13 +246,10 @@ public class SLCS {
 			throw new RuntimeException("Could not create certificate request.", e);
 		}
 	}
-
 	
-	public void init(String url) {
-
-		PyInstance returnValue = shib.openurl(url);
-
-		String pem = createCertificateRequest(returnValue);
+	private void startSlcsRequest() {
+		
+		String pem = createCertificateRequest(response);
 		
 		String cert = submitCertificateRequest(pem);
 		
@@ -253,7 +260,8 @@ public class SLCS {
 			e.printStackTrace();
 			throw new RuntimeException("Could not create X509Certificate object.", e);
 		}
-
+		
+		fireNewSlcsCert();
 	}
 	
 	public X509Certificate getCertificate() {
@@ -264,20 +272,48 @@ public class SLCS {
 		return privateKey;
 	}
 	
-	public static void main(String[] args) {
-		
-		String username = args[0];
-		String password = args[1];
-//		String idp = args[2];
-		String url = "https://slcs1.arcs.org.au/SLCS/login";
-		
-		SLCS slcs = new SLCS(username, password);
-		
-		slcs.init(url);
-		
-		
-		
-		
+	
+	// Event stuff
+	private Vector<SlcsListener> shibListeners;
+
+	private void fireNewSlcsCert() {
+
+		if (shibListeners != null && !shibListeners.isEmpty()) {
+
+			// make a copy of the listener list in case
+			// anyone adds/removes mountPointsListeners
+			Vector<SlcsListener> shibChangeTargets;
+			synchronized (this) {
+				shibChangeTargets = (Vector<SlcsListener>) shibListeners
+						.clone();
+			}
+
+			// walk through the listener list and
+			// call the gridproxychanged method in each
+			Enumeration<SlcsListener> e = shibChangeTargets.elements();
+			while (e.hasMoreElements()) {
+				SlcsListener valueChanged_l = (SlcsListener) e.nextElement();
+				valueChanged_l.slcsLoginComplete(getCertificate(), getPrivateKey());
+			}
+		}
 	}
+
+	// register a listener
+	synchronized public void addSlcsListener(SlcsListener l) {
+		if (shibListeners == null)
+			shibListeners = new Vector<SlcsListener>();
+		shibListeners.addElement(l);
+	}
+
+	// remove a listener
+	synchronized public void removeSlcsListener(SlcsListener l) {
+		if (shibListeners == null) {
+			shibListeners = new Vector<SlcsListener>();
+		}
+		shibListeners.removeElement(l);
+	}
+		
+	
+
 
 }
