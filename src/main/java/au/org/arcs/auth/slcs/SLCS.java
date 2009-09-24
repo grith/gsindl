@@ -38,9 +38,10 @@ import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
 
 import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
-import au.org.arcs.auth.shibboleth.DummyIdpObject;
+import au.org.arcs.auth.shibboleth.CredentialManager;
 import au.org.arcs.auth.shibboleth.IdpObject;
 import au.org.arcs.auth.shibboleth.Shibboleth;
+import au.org.arcs.auth.shibboleth.StaticCredentialManager;
 import au.org.arcs.auth.shibboleth.StaticIdpObject;
 
 public class SLCS {
@@ -55,11 +56,7 @@ public class SLCS {
 
 	private final Shibboleth shib;
 	
-	public SLCS() {
-		this(DEFAULT_SLCS_URL);
-	}
-	
-	public SLCS(String url) {
+	public SLCS(String username, String password) {
 
 		Security
 				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -80,8 +77,9 @@ public class SLCS {
 		}
 
 		kpGen.initialize(1024, new SecureRandom());
-		
-		shib = new Shibboleth(url);
+		IdpObject idp = new StaticIdpObject("VPAC");
+		CredentialManager cm = new StaticCredentialManager(username, password);
+		shib = new Shibboleth(idp, cm);
 
 	}
 	
@@ -239,13 +237,10 @@ public class SLCS {
 		}
 	}
 
-	public void init(String username, char[] password, String idpName) {
-		init(username, password, new StaticIdpObject(idpName));
-	}
 	
-	public void init(String username, char[] password, IdpObject idp) {
+	public void init(String url) {
 
-		PyInstance returnValue = shib.shibOpen(username, password, idp);
+		PyInstance returnValue = shib.openurl(url);
 
 		String pem = createCertificateRequest(returnValue);
 		
@@ -276,9 +271,10 @@ public class SLCS {
 //		String idp = args[2];
 		String url = "https://slcs1.arcs.org.au/SLCS/login";
 		
-		SLCS slcs = new SLCS(url);
+		SLCS slcs = new SLCS(username, password);
 		
-		slcs.init(username, password.toCharArray(), new StaticIdpObject("VPAC"));
+		slcs.init(url);
+		
 		
 		
 		
