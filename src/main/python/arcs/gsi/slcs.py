@@ -24,11 +24,6 @@ import logging
 from urllib import urlencode
 import urllib2
 import xml.dom.minidom
-try:
-    from M2Crypto import X509
-    import arcs.gsi.certificate
-except:
-    pass
 
 log = logging.getLogger('arcs.gsi')
 
@@ -95,6 +90,11 @@ def parse_cert_response(response):
 
     return ''.join([i.data for i in dom.getElementsByTagName("Certificate")[0].childNodes])
 
+try:
+    import arcs.gsi.certificate
+except:
+    pass
+
 
 def slcs_handler(slcsResp):
     """
@@ -113,6 +113,6 @@ def slcs_handler(slcsResp):
     log.debug('POST: %s' % reqURL)
     certResp = urllib2.urlopen(reqURL, data)
     cert = parse_cert_response(certResp)
-    return certreq.get_key(), certreq.get_pubkey(), X509.load_cert_string(str(cert))
+    return arcs.gsi.certificate.Certificate(str(cert), certreq.get_key())
 
 
