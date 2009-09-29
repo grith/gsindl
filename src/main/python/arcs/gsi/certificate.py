@@ -209,8 +209,6 @@ class Certificate:
             if not key:
                 key = Key()
             self._key = key
-
-        if self._key:
             self.set_pubkey(self._key)
 
 
