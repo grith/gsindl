@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
 import au.org.arcs.auth.shibboleth.ShibLoginPanel;
 
 public class SLCSLoginDialog extends JDialog implements SlcsListener {
@@ -27,6 +28,13 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 	 */
 	public static void main(String[] args) {
 		try {
+			
+			java.security.Security.addProvider(new ArcsSecurityProvider());
+
+			java.security.Security.setProperty("ssl.TrustManagerFactory.algorithm",
+					"TrustAllCertificates");
+			
+			
 			SLCSLoginDialog dialog = new SLCSLoginDialog("https://slcs1.arcs.org.au/SLCS/login");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
@@ -46,9 +54,9 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			shibLoginPanel = new ShibLoginPanel();
-			slcs = new SLCS(url, shibLoginPanel, shibLoginPanel.getCredentialManager());
-			slcs.addSlcsListener(this);
 
+			slcs = new SLCS(shibLoginPanel);
+			slcs.addSlcsListener(this);
 			contentPanel.add(shibLoginPanel, BorderLayout.CENTER);
 		}
 		{
@@ -60,7 +68,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						shibLoginPanel.run();
+						shibLoginPanel.login();
 						
 					}
 				});
@@ -80,5 +88,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 
 		System.out.println(cert.toString());
 	}
+
+
 
 }
