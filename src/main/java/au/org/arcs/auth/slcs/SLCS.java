@@ -332,4 +332,15 @@ public class SLCS implements ShibListener {
 		slcsListeners.removeElement(l);
 	}
 
+	public void shibLoginFailed(Exception e) {
+
+		// do nothing...
+		
+	}
+
+	public void shibLoginStarted() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

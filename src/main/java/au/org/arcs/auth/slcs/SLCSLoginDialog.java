@@ -53,7 +53,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
-			shibLoginPanel = new ShibLoginPanel();
+			shibLoginPanel = new ShibLoginPanel(url, true);
 
 			slcs = new SLCS(shibLoginPanel);
 			slcs.addSlcsListener(this);
