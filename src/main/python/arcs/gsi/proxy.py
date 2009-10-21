@@ -19,12 +19,12 @@
 #
 #############################################################################
 
-from M2Crypto import EVP
+from M2Crypto import EVP, m2, X509
 import struct
 
 from certificate import Certificate
 
-
+MBSTRING_ASC  = 0x1000 | 1
 PCI_VALUE_FULL = "critical, language:Inherit all"
 PCI_VALUE_LIMITED = "critical, language:1.3.6.1.4.1.3536.1.1.1.9"
 
@@ -50,7 +50,13 @@ class ProxyCertificate:
 
         self._proxy.set_version(2)
         self.set_serial_number()
-        self._proxy.set_dn(self._certificate.get_subject().as_text() + ', CN=' + str(self._proxy.get_serial_number()))
+        issuer = self._certificate.get_subject()
+        subject = X509.X509_Name()
+        for n in issuer:
+            m2.x509_name_add_entry(subject.x509_name, n.x509_name_entry, -1, 0)
+        subject.add_entry_by_txt(field='CN', type=MBSTRING_ASC,
+                                 entry=str(self._proxy.get_serial_number()),len=-1, loc=-1, set=0)
+        self._proxy.set_dn(subject)
         self._proxy.set_times(lifetime=43200)
         self._proxy.set_issuer_name(self._certificate.get_subject())
 
@@ -84,8 +90,6 @@ class ProxyCertificate:
             r.append(v)
         if 'Digital Signature' not in r:
             r.append('Digital Signature')
-        if 'Data Encipherment' not in r:
-            r.append('Data Encipherment')
         return ', '.join(r)
 
 
