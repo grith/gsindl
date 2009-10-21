@@ -192,7 +192,10 @@ class Certificate:
                  callback=no_passphrase_callback):
         self._key = None
         if key:
-            self._key = Key(key, callback=callback)
+            if isinstance(key, Key):
+                self._key = key
+            else:
+                self._key = Key(key, callback=callback)
 
         if isinstance(certificate, str):
             if certificate.startswith("-----BEGIN CERTIFICATE-----"):
