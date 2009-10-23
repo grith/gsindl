@@ -269,7 +269,7 @@ class Certificate:
         """
         not_before = ASN1.ASN1_UTCTIME()
         not_after = ASN1.ASN1_UTCTIME()
-        not_before.set_time(int(time.time()))
+        not_before.set_time(int(time.time()) - 300)
         not_after.set_time(int(time.time()) + lifetime )
         self._certificate.set_not_before(not_before)
         self._certificate.set_not_after(not_after)
