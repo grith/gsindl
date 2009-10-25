@@ -1,11 +1,12 @@
 package au.org.arcs.auth.slcs;
 
-public class ArcsGsiPackageIndicator {
+import au.org.arcs.jcommons.dependencies.PackageIndicator;
 
-	public Integer getPackageVersion() {
-		
-		return 1;
-		
+public class ArcsGsiPackageIndicator implements PackageIndicator {
+
+	public String getCurrentVersion() {
+		return "0.1-SNAPSHOT";
 	}
+	
 	
 }

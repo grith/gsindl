@@ -19,6 +19,7 @@
 			    <exclude>jython:jythonLib</exclude>
 				<exclude>junit:junit</exclude>
 				<exclude>bouncycastle:bcprov-jdk15</exclude>
+				<exclude>com.jgoodies:forms</exclude>
 			</excludes>
 			<unpackOptions>
 				<excludes>

@@ -54,7 +54,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			shibLoginPanel = new ShibLoginPanel(url, true);
-
+			shibLoginPanel.refreshIdpList();
 			slcs = new SLCS(shibLoginPanel);
 			slcs.addSlcsListener(this);
 			contentPanel.add(shibLoginPanel, BorderLayout.CENTER);
@@ -87,6 +87,12 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 	public void slcsLoginComplete(X509Certificate cert, PrivateKey pk) {
 
 		System.out.println(cert.toString());
+	}
+
+	public void slcsLoginFailed(String message, Exception optionalException) {
+
+		System.out.println(message);
+		
 	}
 
 

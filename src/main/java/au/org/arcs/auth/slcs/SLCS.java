@@ -266,22 +266,20 @@ public class SLCS implements ShibListener {
 
 	private void startSlcsRequest() {
 
+		try {
 		String pem = createCertificateRequest(response);
 
 		String cert = submitCertificateRequest(pem);
 
-		try {
 			x509Cert = (X509Certificate) CertificateFactory.getInstance(
 					"X.509", "BC").generateCertificate(
 					new ByteArrayInputStream(cert.getBytes()));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(
-					"Could not create X509Certificate object.", e);
+			fireNewSlcsCert(true, e);
+			return;
 		}
 
-		fireNewSlcsCert();
+		fireNewSlcsCert(false, null);
 	}
 
 	public X509Certificate getCertificate() {
@@ -295,7 +293,7 @@ public class SLCS implements ShibListener {
 	// Event stuff
 	private Vector<SlcsListener> slcsListeners;
 
-	private void fireNewSlcsCert() {
+	private void fireNewSlcsCert(boolean failed, Exception optionalException) {
 
 		if (slcsListeners != null && !slcsListeners.isEmpty()) {
 
@@ -311,8 +309,12 @@ public class SLCS implements ShibListener {
 			Enumeration<SlcsListener> e = slcsChangeTargets.elements();
 			while (e.hasMoreElements()) {
 				SlcsListener valueChanged_l = (SlcsListener) e.nextElement();
-				valueChanged_l.slcsLoginComplete(getCertificate(),
+				if ( failed ) {
+					valueChanged_l.slcsLoginFailed("Could not generate slcs certificate/proxy.", optionalException);
+				} else {
+					valueChanged_l.slcsLoginComplete(getCertificate(),
 						getPrivateKey());
+				}
 			}
 		}
 	}
