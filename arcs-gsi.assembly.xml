@@ -25,6 +25,9 @@
 					<exclude>**/MANIFEST.MF</exclude>
 					<exclude>**/LICENSE.txt</exclude>
 					<exclude>**/NOTICE.txt</exclude>
+					<exclude>**/ARCS.SF</exclude>
+					<exclude>**/ARCS.RSA</exclude>
+					<exclude>arcs/__init__.py</exclude>
 				</excludes>
 			</unpackOptions>
 		</dependencySet>
