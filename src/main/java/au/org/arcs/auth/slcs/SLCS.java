@@ -30,7 +30,6 @@ import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.openssl.PEMWriter;
-import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyInstance;
 import org.python.core.PyList;
@@ -38,13 +37,14 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
-import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
 import au.org.arcs.auth.shibboleth.CredentialManager;
 import au.org.arcs.auth.shibboleth.IdpObject;
 import au.org.arcs.auth.shibboleth.ShibListener;
 import au.org.arcs.auth.shibboleth.ShibLoginEventSource;
 import au.org.arcs.auth.shibboleth.Shibboleth;
-import au.org.arcs.auth.shibboleth.ShibbolethClient;
+import au.org.arcs.auth.shibboleth.StaticCredentialManager;
+import au.org.arcs.auth.shibboleth.StaticIdpObject;
+import au.org.arcs.jcommons.utils.ArcsSecurityProvider;
 
 public class SLCS implements ShibListener {
 
@@ -62,11 +62,6 @@ public class SLCS implements ShibListener {
 
 		Security
 				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
-		java.security.Security.addProvider(new ArcsSecurityProvider());
-
-		java.security.Security.setProperty("ssl.TrustManagerFactory.algorithm",
-				"TrustAllCertificates");
 
 		try {
 			kpGen = KeyPairGenerator.getInstance("RSA", "BC");
@@ -350,81 +345,27 @@ public class SLCS implements ShibListener {
 	
 	public static void main(String[] args) {
 		
+		// optional
+		Shibboleth.initDefaultSecurityProvider();
+		
 		final String idp = "VPAC";
 		final String username = "markus";
 		// I know, the password should be a char[]. But that doesn't work with the jython bindings and it would be useless in 
 		// this case anyway since python uses plain strings in memory.
-		final String password = args[0];
+		final char[] password = args[0].toCharArray();
 		
-		// instead of creating those objects inline you could also use the StaticIdpObject and StaticCredentialManager classes, 
-		// which would be probably easier...
-		IdpObject idpObject = new IdpObject() {
-			
-			@Override
-			public PyInstance prompt(ShibbolethClient shibboleth) {
-				
-				// since we already know the idp, we tell the shibboleth object to run straight way.
-				// if we had an IdpObject which is for example an interactive gui element we would do it differently.
-				// this is a bit weird, I know, but Shib is to blame for that. Ask Russell if you need to know more...
-				shibboleth.run();
-				return null;
-			}
-			
-			@Override
-			public String get_idp() {
-				// return the idp
-				return idp;
-			}
-		};
-		
-		CredentialManager credentialManager = new CredentialManager() {
-			
-			public void set_title(String title) {
-				// only needed if you want to display an interactive login page
-			}
-			
-			public PyObject prompt(Object shibboleth) {
-				
-				// this is another one of the confusing things that need to be done. Russell is your man.
-				return Py.java2py(shibboleth).invoke("run");
-
-			}
-			
-			public String get_username() {
-				// the username
-				return username;
-			}
-			
-			public String get_password() {
-				// the password
-				return password;
-			}
-		};
-		
-		SlcsListener slcsListener = new SlcsListener() {
-			
-			public void slcsLoginFailed(String message, Exception optionalException) {
-
-				System.out.println("Slcs login failed: "+message);
-			}
-			
-			public void slcsLoginComplete(X509Certificate cert, PrivateKey privateKey) {
-
-				
-				System.out.println("Slcs login complete.");
-				
-				// now do something with your certificate
-			}
-		};
+		IdpObject idpObject = new StaticIdpObject("VPAC");
+		CredentialManager cm = new StaticCredentialManager(username, password);
 		
 		
-		Shibboleth shibboleth = new Shibboleth(idpObject, credentialManager);
-		SLCS slcs = new SLCS(shibboleth);
-		slcs.addSlcsListener(slcsListener);
-		
+		Shibboleth shibboleth = new Shibboleth(idpObject, cm);
 		shibboleth.openurl("https://slcs1.arcs.org.au/SLCS/login");
 		
-
+		SLCS slcs = new SLCS(shibboleth);
+		slcs.shibLoginComplete(shibboleth.getResponse());
+		
+		// get the certificate & key
+		System.out.println(slcs.getCertificate().getSubjectDN().toString());
 		
 	}
 

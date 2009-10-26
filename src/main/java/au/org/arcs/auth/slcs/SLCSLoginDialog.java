@@ -12,8 +12,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import au.org.arcs.auth.shibboleth.ArcsSecurityProvider;
 import au.org.arcs.auth.shibboleth.ShibLoginPanel;
+import au.org.arcs.auth.shibboleth.Shibboleth;
 
 public class SLCSLoginDialog extends JDialog implements SlcsListener {
 
@@ -29,10 +29,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 	public static void main(String[] args) {
 		try {
 			
-			java.security.Security.addProvider(new ArcsSecurityProvider());
-
-			java.security.Security.setProperty("ssl.TrustManagerFactory.algorithm",
-					"TrustAllCertificates");
+			Shibboleth.initDefaultSecurityProvider();
 			
 			
 			SLCSLoginDialog dialog = new SLCSLoginDialog("https://slcs1.arcs.org.au/SLCS/login");
