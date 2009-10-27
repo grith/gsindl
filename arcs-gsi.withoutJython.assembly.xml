@@ -34,6 +34,15 @@
 			</unpackOptions>
 		</dependencySet>
 	</dependencySets>
+	
+	<!-- couldn't figure out a different way -->
+	<files>
+		<file>
+			<source>src/main/python/arcs/__init__.py
+			</source>
+			<outputDirectory>arcs</outputDirectory>
+		</file>
+	</files>
 
 <!--	<fileSets>-->
 <!--		<fileSet>-->
