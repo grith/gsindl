@@ -80,6 +80,10 @@ public class SLCS implements ShibListener {
 	public SLCS(String url, IdpObject idp, CredentialManager cm) {
 
 		initSecurityStuff();
+		
+		interpreter.exec("import sys");
+		interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
+		interpreter.exec("sys.add_package('au.org.arcs.auth.slcs')");
 
 		Shibboleth shib = new Shibboleth(idp, cm);
 		shib.addShibListener(this);
