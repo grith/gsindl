@@ -92,6 +92,8 @@ public class SLCS implements ShibListener {
 
 	public SLCS(ShibLoginEventSource shibEventSource) {
 		initSecurityStuff();
+		interpreter.exec("import sys");
+		interpreter.exec("sys.prefix = ''");
 		shibEventSource.addShibListener(this);
 	}
 
