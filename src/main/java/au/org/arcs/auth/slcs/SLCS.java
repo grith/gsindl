@@ -80,6 +80,8 @@ public class SLCS implements ShibListener {
 
 		initSecurityStuff();
 		
+		
+		// fix for webstart
 		interpreter.exec("import sys");
 		interpreter.exec("sys.prefix = ''");
 //		interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
@@ -92,6 +94,8 @@ public class SLCS implements ShibListener {
 
 	public SLCS(ShibLoginEventSource shibEventSource) {
 		initSecurityStuff();
+		
+		// fix for webstart
 		interpreter.exec("import sys");
 		interpreter.exec("sys.prefix = ''");
 		shibEventSource.addShibListener(this);
