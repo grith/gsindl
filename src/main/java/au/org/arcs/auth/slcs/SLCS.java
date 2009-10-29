@@ -44,7 +44,6 @@ import au.org.arcs.auth.shibboleth.ShibLoginEventSource;
 import au.org.arcs.auth.shibboleth.Shibboleth;
 import au.org.arcs.auth.shibboleth.StaticCredentialManager;
 import au.org.arcs.auth.shibboleth.StaticIdpObject;
-import au.org.arcs.jcommons.utils.ArcsSecurityProvider;
 
 public class SLCS implements ShibListener {
 
@@ -82,8 +81,9 @@ public class SLCS implements ShibListener {
 		initSecurityStuff();
 		
 		interpreter.exec("import sys");
-		interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
-		interpreter.exec("sys.add_package('au.org.arcs.auth.slcs')");
+		interpreter.exec("sys.prefix = ''");
+//		interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
+//		interpreter.exec("sys.add_package('au.org.arcs.auth.slcs')");
 
 		Shibboleth shib = new Shibboleth(idp, cm);
 		shib.addShibListener(this);
