@@ -44,6 +44,7 @@ import au.org.arcs.auth.shibboleth.ShibLoginEventSource;
 import au.org.arcs.auth.shibboleth.Shibboleth;
 import au.org.arcs.auth.shibboleth.StaticCredentialManager;
 import au.org.arcs.auth.shibboleth.StaticIdpObject;
+import au.org.arcs.jcommons.interfaces.SlcsListener;
 
 public class SLCS implements ShibListener {
 

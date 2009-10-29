@@ -14,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 
 import au.org.arcs.auth.shibboleth.ShibLoginPanel;
 import au.org.arcs.auth.shibboleth.Shibboleth;
+import au.org.arcs.jcommons.interfaces.SlcsListener;
 
 public class SLCSLoginDialog extends JDialog implements SlcsListener {
 
