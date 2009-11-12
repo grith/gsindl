@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 from xml.dom.minidom import parse
-from xml import xpath
 import os
 
 ex_req = []
@@ -10,7 +9,10 @@ if not os.path.exists('/etc/redhat-release'):
 
 # Get version from common file
 pom = parse('pom.xml')
-version = xpath.Evaluate('//project/version/text()', pom)[0].data.rstrip('-SNAPSHOT')
+for t in pom.getElementsByTagName('project')[0].childNodes:
+    if t.nodeName == 'version':
+        version = t.childNodes[0].nodeValue.rstrip('-SNAPSHOT')
+        break
 
 setup(name='arcs.gsi',
       version=version,
