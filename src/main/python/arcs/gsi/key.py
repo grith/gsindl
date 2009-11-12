@@ -41,7 +41,11 @@ class Key:
     def __init__(self, key=None, keySize=2048, callback=no_passphrase_callback):
         self._passphrase_callback = callback
         if isinstance(key, str):
-            if path.exists(key):
+            key = key.strip()
+            if key.startswith("-----BEGIN RSA PRIVATE KEY-----"):
+                bio = BIO.MemoryBuffer(key)
+                self._key = RSA.load_key_bio(bio, self._passphrase_callback)
+            elif path.exists(key):
                 keyfile = open(key)
 
                 bio = BIO.File(keyfile)

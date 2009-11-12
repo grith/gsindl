@@ -44,5 +44,7 @@ setup(name='arcs.gsi',
       ] + ex_req,
       entry_points="""
       # -*- Entry points: -*-
+      [console_scripts]
+      proxy-init = arcs.gsi.proxyinit:main
       """,
       )

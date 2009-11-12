@@ -265,7 +265,7 @@ class Certificate:
     def set_times(self, lifetime=43200):
         """
         Sets the lifetime of the certificate
-        Defaults to 12 days
+        Defaults to 12 hours
         """
         not_before = ASN1.ASN1_UTCTIME()
         not_after = ASN1.ASN1_UTCTIME()
