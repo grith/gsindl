@@ -33,7 +33,7 @@ def tearDown(test):
     pass
 
 
-current_dir = os.path.dirname(__file__) + '/../../../../'
+current_dir = os.path.dirname(__file__) + '/../../../../../../'
 
 
 def doc_suite(test_dir, setUp=setUp, tearDown=tearDown, globs=None):
