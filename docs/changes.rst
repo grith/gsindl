@@ -8,7 +8,7 @@ Changelog
 * Now using nose testing [Russell]
 
 
-1.1 - (2009-10-29)
+1.1 (2009-10-29)
 ------------------
 * updated documentation, including addition of sphinx [Russell]
 * Jython hack added to support webstart [Markus]
