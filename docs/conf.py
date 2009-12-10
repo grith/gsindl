@@ -50,10 +50,14 @@ copyright = u'2009, Russell Sim, Sam Morrison'
 #
 # The short X.Y version.
 from xml.dom.minidom import parse
-from xml import xpath
 
+# Get version from common file
 pom = parse('../pom.xml')
-version = xpath.Evaluate('//project/version/text()', pom)[0].data.rstrip('-SNAPSHOT')
+for t in pom.getElementsByTagName('project')[0].childNodes:
+    if t.nodeName == 'version':
+        version = t.childNodes[0].nodeValue.rstrip('-SNAPSHOT')
+        break
+
 # The full version, including alpha/beta/rc tags.
 
 # TODO add support for dev flag
