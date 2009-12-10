@@ -90,29 +90,27 @@ def parse_cert_response(response):
 
     return ''.join([i.data for i in dom.getElementsByTagName("Certificate")[0].childNodes])
 
-try:
+import sys
+is_jython = sys.platform.startswith('java')
+
+if not is_jython:
     import arcs.gsi.certificate
-except:
-    pass
 
+    def slcs_handler(slcsResp):
+        """
+        Take a response from a SLCS Login URL and return the cert,keys
 
-def slcs_handler(slcsResp):
-    """
-    Take a response from a SLCS Login URL and return the cert,keys
+        :rtype: (key, pubkey, certifcate)
+        """
+        token, dn, reqURL, elements = parse_req_response(slcsResp)
 
-    :rtype: (key, pubkey, certifcate)
-    """
-    token, dn, reqURL, elements = parse_req_response(slcsResp)
-
-    certreq = arcs.gsi.certificate.CertificateRequest(dn=str(dn), extensions=elements)
-    certreq.sign()
-    # POST the Token and CertReq back to the slcs server
-    data = urlencode({'AuthorizationToken': token,
-                      'CertificateSigningRequest': repr(certreq)})
-    log.info('Request Signing by SLCS')
-    log.debug('POST: %s' % reqURL)
-    certResp = urllib2.urlopen(reqURL, data)
-    cert = parse_cert_response(certResp)
-    return arcs.gsi.certificate.Certificate(str(cert), certreq.get_key())
-
-
+        certreq = arcs.gsi.certificate.CertificateRequest(dn=str(dn), extensions=elements)
+        certreq.sign()
+        # POST the Token and CertReq back to the slcs server
+        data = urlencode({'AuthorizationToken': token,
+                          'CertificateSigningRequest': repr(certreq)})
+        log.info('Request Signing by SLCS')
+        log.debug('POST: %s' % reqURL)
+        certResp = urllib2.urlopen(reqURL, data)
+        cert = parse_cert_response(certResp)
+        return arcs.gsi.certificate.Certificate(str(cert), certreq.get_key())
