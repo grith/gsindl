@@ -22,8 +22,8 @@ from M2Crypto import X509, m2, BIO, ASN1, Err
 from os import path
 import logging
 import time
-from key import Key
-from util import _build_name_from_string
+from arcs.gsi.key import Key
+from arcs.gsi.util import _build_name_from_string
 from M2Crypto.util import no_passphrase_callback
 
 log = logging.getLogger('arcs.gsi')
@@ -58,7 +58,7 @@ class CertificateRequest:
     def __init__(self, request=None, path=None, dn=None,
                  keySize=2048, key=None, extensions=None):
 
-        self.signed = False
+        self._signed = False
 
         # Create public key object
         if key and not request:
@@ -233,6 +233,7 @@ class Certificate:
 
 
     def add_extensions(self, extensions):
+        """adds a list of extensions to the certificate"""
 
         for e in extensions:
             self.add_extension(e)
@@ -241,6 +242,7 @@ class Certificate:
 
 
     def add_extension(self, e):
+        """add and extension to the certificate"""
         sslower = lambda s: s.lower().replace(' ','')
         name = e['name']
         key = sslower(name)
@@ -254,6 +256,7 @@ class Certificate:
 
 
     def set_issuer_name(self, name):
+        """set the certificate issuer name"""
         if isinstance(name, X509.X509_Name):
             self._certificate.set_issuer_name(name)
         elif isinstance(name, str):
@@ -282,10 +285,12 @@ class Certificate:
 
 
     def sign(self, key, md='sha1'):
+        """sign the certificate with the private key"""
         self._certificate.sign(key, md)
 
 
     def set_pubkey(self, pubkey):
+        """set the certificates public key"""
         self._certificate.set_pubkey(pubkey)
 
 
@@ -295,26 +300,32 @@ class Certificate:
 
 
     def get_serial_number(self):
+        """return the certificates serial number"""
         return self._certificate.get_serial_number()
 
 
     def get_issuer(self):
+        """return the certificates issuer"""
         return self._certificate.get_issuer()
 
 
     def get_version(self):
+        """return the certificates version"""
         return self._certificate.get_version()
 
 
     def get_subject(self):
+        """return the certificates subject"""
         return self._certificate.get_subject()
 
 
     def get_pubkey(self):
+        """return the certificates public key"""
         return self._certificate.get_pubkey()
 
 
     def get_key(self):
+        """return the certificates keypair"""
         if self._key:
             return self._key
         raise ValueError("No Key?")
@@ -328,5 +339,6 @@ class Certificate:
         return self._certificate.as_pem()
 
     def as_der(self):
+        """return the certificate in DER format"""
         return self._certificate.as_der()
 

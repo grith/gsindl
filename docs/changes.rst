@@ -8,7 +8,7 @@ Changelog
 * Now using nose testing [Russell]
 
 
-1.1 (2009-10-29)
+1.1 - (2009-10-29)
 ------------------
 * updated documentation, including addition of sphinx [Russell]
 * Jython hack added to support webstart [Markus]
@@ -19,7 +19,7 @@ Changelog
 * Updated proxy name generation to avoid encoding errors [Russell]
 
 
-1.0 (2009-07-08)
+1.0 - (2009-07-08)
 ----------------
 
 * Initial release
