@@ -1,4 +1,4 @@
-include pom.xml
+include pom.xml COPYING
 recursive-include docs/*.rst
 prune src/main/resources/*
 prune src/main/java/*
