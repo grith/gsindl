@@ -30,6 +30,10 @@ class Getpget(object):
         return obj._pubkey.pkey
 
 
+def quiet_keygen_callback(p, n, out=None):
+    pass
+
+
 class Key:
     """This is a wrapper class for handling key pair generation.
 
@@ -58,7 +62,7 @@ class Key:
                 raise ValueError("WTF")
         else:
             self._pubkey = EVP.PKey()
-            self._key = RSA.gen_key(keySize, m2.RSA_F4)
+            self._key = RSA.gen_key(keySize, m2.RSA_F4, callback=quiet_keygen_callback)
             self._pubkey.assign_rsa(self._key)
 
 
