@@ -1,14 +1,21 @@
 package au.org.arcs.auth.slcs;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -50,7 +57,7 @@ public class SLCS implements ShibListener {
 
 	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
-	private PythonInterpreter interpreter = new PythonInterpreter();
+	private final PythonInterpreter interpreter = new PythonInterpreter();
 	private KeyPairGenerator kpGen = null;
 
 	private PrivateKey privateKey = null;
@@ -80,13 +87,12 @@ public class SLCS implements ShibListener {
 	public SLCS(String url, IdpObject idp, CredentialManager cm) {
 
 		initSecurityStuff();
-		
-		
+
 		// fix for webstart
 		interpreter.exec("import sys");
 		interpreter.exec("sys.prefix = ''");
-//		interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
-//		interpreter.exec("sys.add_package('au.org.arcs.auth.slcs')");
+		// interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
+		// interpreter.exec("sys.add_package('au.org.arcs.auth.slcs')");
 
 		Shibboleth shib = new Shibboleth(idp, cm);
 		shib.addShibListener(this);
@@ -95,7 +101,7 @@ public class SLCS implements ShibListener {
 
 	public SLCS(ShibLoginEventSource shibEventSource) {
 		initSecurityStuff();
-		
+
 		// fix for webstart
 		interpreter.exec("import sys");
 		interpreter.exec("sys.prefix = ''");
@@ -275,9 +281,9 @@ public class SLCS implements ShibListener {
 	private void startSlcsRequest() {
 
 		try {
-		String pem = createCertificateRequest(response);
+			String pem = createCertificateRequest(response);
 
-		String cert = submitCertificateRequest(pem);
+			String cert = submitCertificateRequest(pem);
 
 			x509Cert = (X509Certificate) CertificateFactory.getInstance(
 					"X.509", "BC").generateCertificate(
@@ -309,19 +315,22 @@ public class SLCS implements ShibListener {
 			// anyone adds/removes mountPointsListeners
 			Vector<SlcsListener> slcsChangeTargets;
 			synchronized (this) {
-				slcsChangeTargets = (Vector<SlcsListener>) slcsListeners.clone();
+				slcsChangeTargets = (Vector<SlcsListener>) slcsListeners
+						.clone();
 			}
 
 			// walk through the listener list and
 			// call the gridproxychanged method in each
 			Enumeration<SlcsListener> e = slcsChangeTargets.elements();
 			while (e.hasMoreElements()) {
-				SlcsListener valueChanged_l = (SlcsListener) e.nextElement();
-				if ( failed ) {
-					valueChanged_l.slcsLoginFailed("Could not generate slcs certificate/proxy.", optionalException);
+				SlcsListener valueChanged_l = e.nextElement();
+				if (failed) {
+					valueChanged_l.slcsLoginFailed(
+							"Could not generate slcs certificate/proxy.",
+							optionalException);
 				} else {
 					valueChanged_l.slcsLoginComplete(getCertificate(),
-						getPrivateKey());
+							getPrivateKey());
 				}
 			}
 		}
@@ -345,39 +354,67 @@ public class SLCS implements ShibListener {
 	public void shibLoginFailed(Exception e) {
 
 		// do nothing...
-		
+
 	}
 
 	public void shibLoginStarted() {
 
 		// do nothing
-		
-	}
-	
-	public static void main(String[] args) {
-		
-		// optional
-		Shibboleth.initDefaultSecurityProvider();
-		
-		final String idp = "VPAC";
-		final String username = "markus";
-		// I know, the password should be a char[]. But that doesn't work with the jython bindings and it would be useless in 
-		// this case anyway since python uses plain strings in memory.
-		final char[] password = args[0].toCharArray();
-		
-		IdpObject idpObject = new StaticIdpObject("VPAC");
-		CredentialManager cm = new StaticCredentialManager(username, password);
-		
-		
-		Shibboleth shibboleth = new Shibboleth(idpObject, cm);
-		shibboleth.openurl("https://slcs1.arcs.org.au/SLCS/login");
-		
-		SLCS slcs = new SLCS(shibboleth);
-		slcs.shibLoginComplete(shibboleth.getResponse());
-		
-		// get the certificate & key
-		System.out.println(slcs.getCertificate().getSubjectDN().toString());
-		
+
 	}
 
+	public static void main(String[] args) throws IOException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException {
+
+		// optional
+		Shibboleth.initDefaultSecurityProvider();
+
+		final String idp = "ARCS IdP";
+		final String username = "markus";
+		// I know, the password should be a char[]. But that doesn't work with
+		// the jython bindings and it would be useless in
+		// this case anyway since python uses plain strings in memory.
+		final char[] password = args[0].toCharArray();
+
+		IdpObject idpObject = new StaticIdpObject(idp);
+		CredentialManager cm = new StaticCredentialManager(username, password);
+
+		Shibboleth shibboleth = new Shibboleth(idpObject, cm);
+		shibboleth.openurl("https://slcs1.arcs.org.au/SLCS/login");
+
+		SLCS slcs = new SLCS(shibboleth);
+		slcs.shibLoginComplete(shibboleth.getResponse());
+
+		// get the certificate & key
+		X509Certificate cert = slcs.getCertificate();
+		PrivateKey privateKey = slcs.getPrivateKey();
+
+		File privateKeyFile = new File("/home/markus/key.pem");
+
+		X509Certificate[] certChain = new X509Certificate[1];
+		KeyStore ks = null;
+		try {
+			ks = KeyStore.getInstance("PKCS12", "BC");
+			ks.load(null, null);
+			certChain[0] = cert;
+		} catch (Exception e) {
+			// TODO
+			e.printStackTrace();
+		}
+
+		File p12file = new File("/home/markus/cert.p12");
+		OutputStream fos = null;
+
+		ks.setKeyEntry("Markus Binsteiner", privateKey, null, certChain);
+		fos = new FileOutputStream(p12file);
+		ks.store(fos, "nnnn".toCharArray());
+		try {
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			e.printStackTrace();
+		}
+
+	}
 }
