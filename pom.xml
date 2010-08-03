@@ -2,6 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>au.org.arcs.auth</groupId>
 	<artifactId>arcs-gsi</artifactId>
+	<name>Slcs client</name>
 	<version>1.2-SNAPSHOT</version>
 
 	<repositories>
@@ -15,7 +16,8 @@
 		</repository>
 	</repositories>
 
-    <scm>
+	<description>Slcs client written in Python (incl. Java wrapper)</description>
+	<scm>
         <connection>scm:git:git://code.arcs.org.au/arcs-gsi/arcs-gsi.git
         </connection>
         <url>scm:git:git://code.arcs.org.au/arcs-gsi/arcs-gsi.git
@@ -51,7 +53,7 @@
 		<dependency>
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
-			<version>143</version>
+			<version>145</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
