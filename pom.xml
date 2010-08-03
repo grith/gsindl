@@ -3,7 +3,7 @@
 	<groupId>au.org.arcs.auth</groupId>
 	<artifactId>arcs-gsi</artifactId>
 	<name>Slcs client</name>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 
 	<repositories>
 		<repository>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>au.org.arcs.auth</groupId>
 			<artifactId>arcs-shibboleth-client</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>0.2</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -58,9 +58,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>au.org.arcs.commons</groupId>
-			<artifactId>arcs-jcommons</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<groupId>org.bestgrid</groupId>
+			<artifactId>grid-jcommons</artifactId>
+			<version>1.1</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
