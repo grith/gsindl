@@ -4,7 +4,7 @@
 	<artifactId>arcs-gsi</artifactId>
 	<packaging>jar</packaging>
 	<name>Slcs client</name>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 
 	<repositories>
 		<repository>
