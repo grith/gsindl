@@ -94,7 +94,6 @@ Creating a certificate, currently this can't be done from a request because ther
 >>> c.set_dn("DC=au,DC=org,DC=arcs,DC=test,O=VPAC,CN=Russell Sim")
 >>> c.add_extensions([{'critical': False, 'name': 'ExtendedKeyUsage', 'value': 'clientAuth'}, {'critical': True, 'name': 'KeyUsage', 'value': 'Digital Signature, Key Encipherment'}, {'critical': False, 'name': 'CertificatePolicies', 'value': '1.3.6.1.4.1.31863.1.0.1'}, {'critical': False, 'name': 'SubjectAltName', 'value': 'email:russell@vpac.org'}])
 >>> c.set_version(2)
->>> c.set_serial_number()
 >>> c.set_times()
 >>> c.set_issuer_name(c.get_subject())
 >>> k = arcs.gsi.key.Key()
@@ -124,7 +123,7 @@ Certificate:
                 Exponent: 65537 (0x10001)
         X509v3 extensions:
             X509v3 Key Usage: critical
-                Digital Signature, Key Encipherment, Data Encipherment
+                Digital Signature, Key Encipherment
             Proxy Certificate Information: critical
                 Path Length Constraint: infinite
                 Policy Language: Inherit all
