@@ -41,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'arcs.gsi'
+project = u'gsindl'
 copyright = u'2009, Russell Sim, Sam Morrison'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -163,7 +163,7 @@ html_static_path = ['.static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'arcs-gsidoc'
+htmlhelp_basename = 'gsindldoc'
 
 
 # Options for LaTeX output
@@ -178,7 +178,7 @@ htmlhelp_basename = 'arcs-gsidoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'arcs-gsi.tex', ur'arcs-gsi Documentation',
+  ('index', 'gsindl.tex', ur'gsindl Documentation',
    ur'Russell Sim, Sam Morrison', 'manual'),
 ]
 

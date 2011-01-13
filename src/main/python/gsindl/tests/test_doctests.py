@@ -1,5 +1,6 @@
 #############################################################################
 #
+# Copyright (c) 2011 Russell Sim <russell.sim@gmail.com>
 # Copyright (c) 2009 Victorian Partnership for Advanced Computing Ltd and
 # Contributors.
 # All Rights Reserved.
@@ -21,19 +22,22 @@
 
 __docformat__ = 'restructuredtext'
 
-import os, sys
+import os
+import sys
 
 import unittest
 import doctest
 
+
 def setUp(test):
-    import arcs.gsi.certificate
+    import gsindl.certificate
+
 
 def tearDown(test):
     pass
 
 
-current_dir = os.path.dirname(__file__) + '/../../../../../../'
+current_dir = os.path.dirname(__file__) + '/../../../../../'
 
 
 def doc_suite(test_dir, setUp=setUp, tearDown=tearDown, globs=None):
@@ -65,6 +69,7 @@ def doc_suite(test_dir, setUp=setUp, tearDown=tearDown, globs=None):
                                           module_relative=False))
 
     return unittest.TestSuite(suite)
+
 
 def test_suite():
     """returns the test suite"""

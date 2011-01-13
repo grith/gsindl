@@ -1,5 +1,6 @@
 #############################################################################
 #
+# Copyright (c) 2011 Russell Sim <russell.sim@gmail.com>
 # Copyright (c) 2009 Victorian Partnership for Advanced Computing Ltd and
 # Contributors.
 # All Rights Reserved.
@@ -19,17 +20,18 @@
 #
 #############################################################################
 
-
-from M2Crypto import X509
 import datetime
 import logging
 
-log = logging.getLogger('arcs.gsi')
+from M2Crypto import X509
 
-MBSTRING_ASC  = 0x1000 | 1
+log = logging.getLogger('gsindl')
+
+MBSTRING_ASC = 0x1000 | 1
+
 
 def _build_name_from_string(dn):
-    """"
+    """
     Turns a DN from a string to a X509.X509_Name
     """
     x509Name = X509.X509_Name()
@@ -39,8 +41,9 @@ def _build_name_from_string(dn):
     for entry in dn.split(splitchar):
         l = entry.split("=")
         x509Name.add_entry_by_txt(field=str(l[0].strip()), type=MBSTRING_ASC,
-                                      entry=str(l[1]),len=-1, loc=-1, set=0)
+                                      entry=str(l[1]), len=-1, loc=-1, set=0)
     return x509Name
+
 
 def cert_time_diff(cert, date=None):
     """
@@ -51,4 +54,3 @@ def cert_time_diff(cert, date=None):
     d1 = datetime.datetime.strptime(str(time), "%b %d %H:%M:%S %Y %Z")
     d2 = date or datetime.datetime.now()
     return d1 - d2
-

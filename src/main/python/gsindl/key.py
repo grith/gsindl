@@ -1,5 +1,6 @@
 #############################################################################
 #
+# Copyright (c) 2011 Russell Sim <russell.sim@gmail.com>
 # Copyright (c) 2009 Victorian Partnership for Advanced Computing Ltd and
 # Contributors.
 # All Rights Reserved.
@@ -20,6 +21,7 @@
 #############################################################################
 
 from os import path
+
 from M2Crypto import BIO, RSA, EVP, m2
 from M2Crypto.util import no_passphrase_callback
 
@@ -34,43 +36,42 @@ def quiet_keygen_callback(p, n, out=None):
     pass
 
 
-class Key:
+def generate_key(key=None, keySize=2048, callback=no_passphrase_callback):
     """This is a wrapper class for handling key pair generation.
 
     :param key: the :class:`str` or file path to the key
     :param keySize: The size of the key to be generated (default 2048)
-    :param callback: a function that is called when outputting the key, it's used to encrypt the key before writing it.
+    :param callback: a function that is called when outputting the key,
+       it's used to encrypt the key before writing it.
 
     """
-    def __init__(self, key=None, keySize=2048, callback=no_passphrase_callback):
-        self._passphrase_callback = callback
-        if isinstance(key, str):
-            key = key.strip()
-            if key.startswith("-----BEGIN RSA PRIVATE KEY-----"):
-                bio = BIO.MemoryBuffer(key)
-                self._key = RSA.load_key_bio(bio, self._passphrase_callback)
-            elif path.exists(key):
-                keyfile = open(key)
+    if isinstance(key, str):
+        key = key.strip()
+        if key.startswith("-----BEGIN RSA PRIVATE KEY-----"):
+            bio = BIO.MemoryBuffer(key)
+            _key = RSA.load_key_bio(bio, callback)
+        elif path.exists(key):
+            keyfile = open(key)
 
-                bio = BIO.File(keyfile)
-                key = RSA.load_key_bio(bio, self._passphrase_callback)
+            bio = BIO.File(keyfile)
+            key = RSA.load_key_bio(bio, callback)
 
-                self._pubkey = EVP.PKey()
-                self._key = key
-                self._pubkey.assign_rsa(self._key)
-            else:
-                raise ValueError("WTF")
+            _pubkey = EVP.PKey()
+            _key = key
+            _pubkey.assign_rsa(_key)
         else:
-            self._pubkey = EVP.PKey()
-            self._key = RSA.gen_key(keySize, m2.RSA_F4, callback=quiet_keygen_callback)
-            self._pubkey.assign_rsa(self._key)
+            raise ValueError("WTF")
+    else:
+        _pubkey = EVP.PKey()
+        _key = RSA.gen_key(keySize, m2.RSA_F4, callback=quiet_keygen_callback)
+        _pubkey.assign_rsa(_key)
+    return _pubkey
 
 
-    pkey = Getpget()
-
-
-    def __str__(self):
-        bio = BIO.MemoryBuffer()
-        self._key.save_key_bio(bio, cipher=None)
-        return bio.read()
-
+def key_to_str(key):
+    """
+    This function print's a key unencrypted DANGERIOUS
+    """
+    bio = BIO.MemoryBuffer()
+    key.save_key_bio(bio, cipher=None)
+    return bio.read()

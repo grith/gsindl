@@ -14,7 +14,7 @@ for t in pom.getElementsByTagName('project')[0].childNodes:
         version = t.childNodes[0].nodeValue.rstrip('-SNAPSHOT')
         break
 
-setup(name='arcs.gsi',
+setup(name='gsindl',
       version=version,
       description="Library to assist GSI authentication and certificate handling in python.",
       long_description=".. contents::\n\n" +
@@ -31,13 +31,12 @@ setup(name='arcs.gsi',
         ],
       keywords='',
       author='Russell Sim',
-      author_email='russell.sim@arcs.org.au',
-      url='http://code.arcs.org.au/gitorious/arcs-gsi/arcs-gsi',
-      download_url='http://code.arcs.org.au/pypi/simple/arcs.gsi/',
+      author_email='russell.sim@gmail.com',
+      url='https://github.com/russell/gsindl',
+      download_url='',
       license='GPL',
       packages=find_packages('src/main/python', exclude=['ez_setup']),
       package_dir = {'': 'src/main/python'},
-      namespace_packages=['arcs'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[
@@ -47,6 +46,6 @@ setup(name='arcs.gsi',
       entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
-      proxy-init = arcs.gsi.proxyinit:main
+      proxy-init = gsindl.proxyinit:main
       """,
       )

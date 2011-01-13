@@ -1,10 +1,10 @@
-:mod:`~arcs.gsi.slcs` -- utility functions for assisting with responses from SLCS servers
-=========================================================================================
+:mod:`~gsindl.slcs` -- utility functions for assisting with responses from SLCS servers
+=======================================================================================
 
 .. _ref-slcs
 
-.. module:: arcs.gsi.slcs
-.. moduleauthor:: Russell Sim <russell@vpac.org>
+.. module:: gsindl.slcs
+.. moduleauthor:: Russell Sim <russell.sim@gmail.com>
 
 .. autofunction:: parse_req_response
 

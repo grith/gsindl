@@ -1,24 +1,21 @@
-:mod:`~arcs.gsi.proxy` -- Handle certificate proxies
+:mod:`~gsindl.proxy` -- Handle certificate proxies
 ====================================================
 
 .. _ref-proxy
 
-.. module:: arcs.gsi.proxy
-.. moduleauthor:: Russell Sim <russell@vpac.org>
+.. module:: gsindl.proxy
+.. moduleauthor:: Russell Sim <russell.sim@gmail.com>
 
 
-:class:`ProxyCertificate` Objects
----------------------------------
-.. autoclass:: ProxyCertificate
-   :members:
-   :undoc-members:
-
+:py:func:`generate_proxy`
+-------------------------
+.. autofunction:: generate_proxy
 
 .. seealso::
 
-    Class :class:`~arcs.gsi.certificate.Certificate`
-        a class that is used to handle certificates
+    Function :py:func:`~gsindl.certificate.generate_certificate`
+        a function that is used to handle certificates
 
-    Class :class:`~arcs.gsi.key.Key`
-        a class that is used by the certificate classes to handle the key pairs
+    Function :py:func:`~gsindl.key.generate_key`
+        a function that is used by the certificate classes to handle the key pairs
 

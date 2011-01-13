@@ -1,8 +1,8 @@
-.. arcs.gsi documentation master file, created by sphinx-quickstart on Fri Jul  3 10:23:35 2009.
+.. gsindl documentation master file, created by sphinx-quickstart on Fri Jul  3 10:23:35 2009.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to arcs.gsi's documentation!
+Welcome to gsindl's documentation!
 ====================================
 
 Contents:

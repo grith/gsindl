@@ -1,27 +1,24 @@
-:mod:`~arcs.gsi.certficate` -- Handle certificates and requests
-===============================================================
+:mod:`~gsindl.certficate` -- Handle certificates and requests
+=============================================================
 
 .. _ref-certificate
 
-.. module:: arcs.gsi.certificate
-.. moduleauthor:: Russell Sim <russell@vpac.org>
+.. module:: gsindl.certificate
+.. moduleauthor:: Russell Sim <russell.sim@gmail.com>
 
 
-:class:`CertificateRequest` Objects
------------------------------------
-.. autoclass:: CertificateRequest
-   :members:
-   :undoc-members:
+:py:func:`generate_request`
+---------------------------
+.. autofunction:: generate_request
 
 
-:class:`Certificate` Objects
-----------------------------
-.. autoclass:: Certificate
-   :members:
-   :undoc-members:
+:py:func:`generate_certificate`
+-------------------------------
+.. autofunction:: generate_certificate
+
 
 .. seealso::
 
-    Class :class:`~arcs.gsi.key.Key`
-        a class that is used by the certificate classes to handle the key pairs
+    Function :py:func:`~gsindl.key.generate_key`
+        a function that is used by the certificate classes to handle the key pairs
 

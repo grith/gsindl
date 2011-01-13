@@ -1,5 +1,6 @@
 #############################################################################
 #
+# Copyright (c) 2011 Russell Sim <russell.sim@gmail.com>
 # Copyright (c) 2009 Victorian Partnership for Advanced Computing Ltd and
 # Contributors.
 # All Rights Reserved.
@@ -20,12 +21,11 @@
 #############################################################################
 
 import logging
-
-from urllib import urlencode
 import urllib2
 import xml.dom.minidom
+from urllib import urlencode
 
-log = logging.getLogger('arcs.gsi')
+log = logging.getLogger('gsindl')
 
 
 class SLCSException(Exception):
@@ -73,12 +73,15 @@ def parse_req_response(response):
         name = str(e.getAttribute('name'))
         critical = str(e.getAttribute('critical')) == 'true' or False
         value = str(e.childNodes[0].data)
-        elements.append({'name':name, 'critical':critical, 'value':value})
+        elements.append({'name': name, 'critical': critical, 'value': value})
     return token, dn, reqURL, elements
 
 
 def parse_cert_response(response):
-    """parse a SLCS signed certificate response and either return the certificate or None"""
+    """
+    parse a SLCS signed certificate response and either \
+    return the certificate or None
+    """
     dom = xml.dom.minidom.parse(response)
     status = dom.getElementsByTagName("Status")[0].childNodes[0].data
     if status == 'Error':
@@ -88,13 +91,14 @@ def parse_cert_response(response):
         log.error(stack)
         raise SLCSException(error, stack)
 
-    return ''.join([i.data for i in dom.getElementsByTagName("Certificate")[0].childNodes])
+    return ''.join([i.data for i in
+                    dom.getElementsByTagName("Certificate")[0].childNodes])
 
 import sys
 is_jython = sys.platform.startswith('java')
 
 if not is_jython:
-    import arcs.gsi.certificate
+    from gsindl.certificate import generate_certificate
 
     def slcs_handler(slcsResp):
         """
@@ -104,13 +108,14 @@ if not is_jython:
         """
         token, dn, reqURL, elements = parse_req_response(slcsResp)
 
-        certreq = arcs.gsi.certificate.CertificateRequest(dn=str(dn), extensions=elements)
-        certreq.sign()
+        certreq, k = generate_certificate(dn=str(dn),
+                                          extensions=elements)
+        certreq.sign(k, 'sha1')
         # POST the Token and CertReq back to the slcs server
         data = urlencode({'AuthorizationToken': token,
-                          'CertificateSigningRequest': repr(certreq)})
+                          'CertificateSigningRequest': certreq.as_pem()})
         log.info('Request Signing by SLCS')
         log.debug('POST: %s' % reqURL)
         certResp = urllib2.urlopen(reqURL, data)
         cert = parse_cert_response(certResp)
-        return arcs.gsi.certificate.Certificate(str(cert), certreq.get_key())
+        return generate_certificate(str(cert), key=k)

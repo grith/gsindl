@@ -3,6 +3,8 @@ Changelog
 
 1.2 - Unreleased
 ----------------
+* Renamed project to gsindl [Russell]
+* Removed all classes and folded functionality into functions [Russell]
 * Key class now accepts PEM formated keys [Russell]
 * Python 2.6 compatability, removed dependency on xpath [Russell]
 * Now using nose testing [Russell]
