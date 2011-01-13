@@ -27,18 +27,17 @@
 					<exclude>**/NOTICE.txt</exclude>
 					<exclude>**/ARCS.SF</exclude>
 					<exclude>**/ARCS.RSA</exclude>
-					<exclude>arcs/__init__.py</exclude>
 				</excludes>
 			</unpackOptions>
 		</dependencySet>
 	</dependencySets>
-	
+
 	<!-- couldn't figure out a different way -->
 	<files>
 		<file>
-			<source>src/main/python/arcs/__init__.py
+			<source>src/main/python/gsindl/__init__.py
 			</source>
-			<outputDirectory>arcs</outputDirectory>
+			<outputDirectory>gsindl</outputDirectory>
 		</file>
 	</files>
 <!--	<fileSets>-->
