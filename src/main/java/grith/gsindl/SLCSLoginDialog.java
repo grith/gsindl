@@ -19,9 +19,9 @@ import au.org.arcs.jcommons.interfaces.SlcsListener;
 public class SLCSLoginDialog extends JDialog implements SlcsListener {
 
 	private final JPanel contentPanel = new JPanel();
-	
+
 	private ShibLoginPanel shibLoginPanel;
-	
+
 	private SLCS slcs = null;
 
 	/**
@@ -29,11 +29,11 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 	 */
 	public static void main(String[] args) {
 		try {
-			
+
 			Shibboleth.initDefaultSecurityProvider();
-			
-			
-			SLCSLoginDialog dialog = new SLCSLoginDialog("https://slcs1.arcs.org.au/SLCS/login");
+
+			SLCSLoginDialog dialog = new SLCSLoginDialog(
+					"https://slcs1.arcs.org.au/SLCS/login");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -65,9 +65,9 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
+
 						shibLoginPanel.login();
-						
+
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -90,9 +90,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 	public void slcsLoginFailed(String message, Exception optionalException) {
 
 		System.out.println(message);
-		
+
 	}
-
-
 
 }
