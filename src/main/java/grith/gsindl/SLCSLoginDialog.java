@@ -1,4 +1,4 @@
-package au.org.arcs.auth.slcs;
+package grith.gsindl;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

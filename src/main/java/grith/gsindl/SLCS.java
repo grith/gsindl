@@ -1,4 +1,4 @@
-package au.org.arcs.auth.slcs;
+package grith.gsindl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -92,7 +92,7 @@ public class SLCS implements ShibListener {
 		interpreter.exec("import sys");
 		interpreter.exec("sys.prefix = ''");
 		// interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
-		// interpreter.exec("sys.add_package('au.org.arcs.auth.slcs')");
+		// interpreter.exec("sys.add_package('grith.gsindl')");
 
 		Shibboleth shib = new Shibboleth(idp, cm);
 		shib.addShibListener(this);

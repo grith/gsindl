@@ -12,7 +12,7 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>au.org.arcs.auth:arcs-gsi</include>
+				<include>grith:gsindl</include>
 			</includes>
 			<excludes>
 				<exclude>junit:junit</exclude>
