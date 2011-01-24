@@ -57,31 +57,79 @@ public class SLCS implements ShibListener {
 
 	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
-	private final PythonInterpreter interpreter = new PythonInterpreter();
-	private KeyPairGenerator kpGen = null;
+	public static void main(String[] args) throws IOException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException {
 
+		// optional
+		Shibboleth.initDefaultSecurityProvider();
+
+		final String idp = "ARCS IdP";
+		final String username = "markus";
+		// I know, the password should be a char[]. But that doesn't work with
+		// the jython bindings and it would be useless in
+		// this case anyway since python uses plain strings in memory.
+		final char[] password = args[0].toCharArray();
+
+		IdpObject idpObject = new StaticIdpObject(idp);
+		CredentialManager cm = new StaticCredentialManager(username, password);
+
+		Shibboleth shibboleth = new Shibboleth(idpObject, cm);
+		shibboleth.openurl("https://slcs1.arcs.org.au/SLCS/login");
+
+		SLCS slcs = new SLCS(shibboleth);
+		slcs.shibLoginComplete(shibboleth.getResponse());
+
+		// get the certificate & key
+		X509Certificate cert = slcs.getCertificate();
+		PrivateKey privateKey = slcs.getPrivateKey();
+
+		File privateKeyFile = new File("/home/markus/key.pem");
+
+		X509Certificate[] certChain = new X509Certificate[1];
+		KeyStore ks = null;
+		try {
+			ks = KeyStore.getInstance("PKCS12", "BC");
+			ks.load(null, null);
+			certChain[0] = cert;
+		} catch (Exception e) {
+			// TODO
+			e.printStackTrace();
+		}
+
+		File p12file = new File("/home/markus/cert.p12");
+		OutputStream fos = null;
+
+		ks.setKeyEntry("Markus Binsteiner", privateKey, null, certChain);
+		fos = new FileOutputStream(p12file);
+		ks.store(fos, "nnnn".toCharArray());
+		try {
+			fos.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			e.printStackTrace();
+		}
+
+	}
+	private final PythonInterpreter interpreter = new PythonInterpreter();
+
+	private KeyPairGenerator kpGen = null;
 	private PrivateKey privateKey = null;
+
 	private X509Certificate x509Cert = null;
 
 	private PyInstance response;
 
-	public void initSecurityStuff() {
+	// Event stuff
+	private Vector<SlcsListener> slcsListeners;
 
-		Security
-				.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+	public SLCS(ShibLoginEventSource shibEventSource) {
+		initSecurityStuff();
 
-		try {
-			kpGen = KeyPairGenerator.getInstance("RSA", "BC");
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		kpGen.initialize(1024, new SecureRandom());
-
+		// fix for webstart
+		interpreter.exec("import sys");
+		interpreter.exec("sys.prefix = ''");
+		shibEventSource.addShibListener(this);
 	}
 
 	public SLCS(String url, IdpObject idp, CredentialManager cm) {
@@ -99,44 +147,17 @@ public class SLCS implements ShibListener {
 		shib.openurl(url);
 	}
 
-	public SLCS(ShibLoginEventSource shibEventSource) {
-		initSecurityStuff();
-
-		// fix for webstart
-		interpreter.exec("import sys");
-		interpreter.exec("sys.prefix = ''");
-		shibEventSource.addShibListener(this);
-	}
-
-	public void shibLoginComplete(PyInstance response) {
-
-		this.response = response;
-
-		startSlcsRequest();
-
-	}
-
-	private String submitCertificateRequest(String pem) {
-
-		interpreter.set("certreq", pem);
-		interpreter.exec("from urllib import urlencode");
-		interpreter.exec("import urllib2");
-		interpreter
-				.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': certreq})");
-		interpreter.exec("certResp = urllib2.urlopen(reqURL, data)");
-
-		interpreter.exec("from arcs.gsi.slcs import parse_cert_response");
-		interpreter.exec("cert = parse_cert_response(certResp)");
-
-		PyObject cert = interpreter.get("cert");
-
-		return cert.asString();
-
+	// register a listener
+	synchronized public void addSlcsListener(SlcsListener l) {
+		if (slcsListeners == null) {
+			slcsListeners = new Vector<SlcsListener>();
+		}
+		slcsListeners.addElement(l);
 	}
 
 	private String createCertificateRequest(PyInstance response) {
 
-		interpreter.exec("from arcs.gsi.slcs import parse_req_response");
+		interpreter.exec("from gsindl.slcs import parse_req_response");
 
 		interpreter.set("slcsResp", response);
 		interpreter
@@ -278,38 +299,9 @@ public class SLCS implements ShibListener {
 		}
 	}
 
-	private void startSlcsRequest() {
-
-		try {
-			String pem = createCertificateRequest(response);
-
-			String cert = submitCertificateRequest(pem);
-
-			x509Cert = (X509Certificate) CertificateFactory.getInstance(
-					"X.509", "BC").generateCertificate(
-					new ByteArrayInputStream(cert.getBytes()));
-		} catch (Exception e) {
-			fireNewSlcsCert(true, e);
-			return;
-		}
-
-		fireNewSlcsCert(false, null);
-	}
-
-	public X509Certificate getCertificate() {
-		return x509Cert;
-	}
-
-	public PrivateKey getPrivateKey() {
-		return privateKey;
-	}
-
-	// Event stuff
-	private Vector<SlcsListener> slcsListeners;
-
 	private void fireNewSlcsCert(boolean failed, Exception optionalException) {
 
-		if (slcsListeners != null && !slcsListeners.isEmpty()) {
+		if ((slcsListeners != null) && !slcsListeners.isEmpty()) {
 
 			// make a copy of the listener list in case
 			// anyone adds/removes mountPointsListeners
@@ -336,11 +328,30 @@ public class SLCS implements ShibListener {
 		}
 	}
 
-	// register a listener
-	synchronized public void addSlcsListener(SlcsListener l) {
-		if (slcsListeners == null)
-			slcsListeners = new Vector<SlcsListener>();
-		slcsListeners.addElement(l);
+	public X509Certificate getCertificate() {
+		return x509Cert;
+	}
+
+	public PrivateKey getPrivateKey() {
+		return privateKey;
+	}
+
+	public void initSecurityStuff() {
+
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
+		try {
+			kpGen = KeyPairGenerator.getInstance("RSA", "BC");
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		kpGen.initialize(1024, new SecureRandom());
+
 	}
 
 	// remove a listener
@@ -349,6 +360,14 @@ public class SLCS implements ShibListener {
 			slcsListeners = new Vector<SlcsListener>();
 		}
 		slcsListeners.removeElement(l);
+	}
+
+	public void shibLoginComplete(PyInstance response) {
+
+		this.response = response;
+
+		startSlcsRequest();
+
 	}
 
 	public void shibLoginFailed(Exception e) {
@@ -363,58 +382,39 @@ public class SLCS implements ShibListener {
 
 	}
 
-	public static void main(String[] args) throws IOException,
-			KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	private void startSlcsRequest() {
 
-		// optional
-		Shibboleth.initDefaultSecurityProvider();
-
-		final String idp = "ARCS IdP";
-		final String username = "markus";
-		// I know, the password should be a char[]. But that doesn't work with
-		// the jython bindings and it would be useless in
-		// this case anyway since python uses plain strings in memory.
-		final char[] password = args[0].toCharArray();
-
-		IdpObject idpObject = new StaticIdpObject(idp);
-		CredentialManager cm = new StaticCredentialManager(username, password);
-
-		Shibboleth shibboleth = new Shibboleth(idpObject, cm);
-		shibboleth.openurl("https://slcs1.arcs.org.au/SLCS/login");
-
-		SLCS slcs = new SLCS(shibboleth);
-		slcs.shibLoginComplete(shibboleth.getResponse());
-
-		// get the certificate & key
-		X509Certificate cert = slcs.getCertificate();
-		PrivateKey privateKey = slcs.getPrivateKey();
-
-		File privateKeyFile = new File("/home/markus/key.pem");
-
-		X509Certificate[] certChain = new X509Certificate[1];
-		KeyStore ks = null;
 		try {
-			ks = KeyStore.getInstance("PKCS12", "BC");
-			ks.load(null, null);
-			certChain[0] = cert;
+			String pem = createCertificateRequest(response);
+
+			String cert = submitCertificateRequest(pem);
+
+			x509Cert = (X509Certificate) CertificateFactory.getInstance(
+					"X.509", "BC").generateCertificate(
+					new ByteArrayInputStream(cert.getBytes()));
 		} catch (Exception e) {
-			// TODO
-			e.printStackTrace();
+			fireNewSlcsCert(true, e);
+			return;
 		}
 
-		File p12file = new File("/home/markus/cert.p12");
-		OutputStream fos = null;
+		fireNewSlcsCert(false, null);
+	}
 
-		ks.setKeyEntry("Markus Binsteiner", privateKey, null, certChain);
-		fos = new FileOutputStream(p12file);
-		ks.store(fos, "nnnn".toCharArray());
-		try {
-			fos.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			e.printStackTrace();
-		}
+	private String submitCertificateRequest(String pem) {
+
+		interpreter.set("certreq", pem);
+		interpreter.exec("from urllib import urlencode");
+		interpreter.exec("import urllib2");
+		interpreter
+				.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': certreq})");
+		interpreter.exec("certResp = urllib2.urlopen(reqURL, data)");
+
+		interpreter.exec("from gsindl.slcs import parse_cert_response");
+		interpreter.exec("cert = parse_cert_response(certResp)");
+
+		PyObject cert = interpreter.get("cert");
+
+		return cert.asString();
 
 	}
 }
