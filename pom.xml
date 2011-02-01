@@ -45,9 +45,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>au.org.arcs.auth</groupId>
-			<artifactId>arcs-shibboleth-client</artifactId>
-			<version>0.2</version>
+			<groupId>grith</groupId>
+			<artifactId>sibboleth</artifactId>
+			<version>0.3-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -55,13 +55,6 @@
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
 			<version>145</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bestgrid</groupId>
-			<artifactId>grid-jcommons</artifactId>
-			<version>1.2.1</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
@@ -141,12 +134,12 @@
 
 	<profiles>
 		<profile>
-		<!--	<id>sign</id>
-			<activation>
-				<property>
-					<name>BUILD_NUMBER</name>
-				</property>
-			</activation> -->
+			<id>sign</id>
+<!--			<activation>-->
+<!--				<property>-->
+<!--					<name>BUILD_NUMBER</name>-->
+<!--				</property>-->
+<!--			</activation> -->
 
 			<build>
 				<plugins>

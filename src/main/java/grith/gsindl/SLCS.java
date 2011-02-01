@@ -1,5 +1,14 @@
 package grith.gsindl;
 
+import grisu.jcommons.interfaces.SlcsListener;
+import grith.sibboleth.CredentialManager;
+import grith.sibboleth.IdpObject;
+import grith.sibboleth.ShibListener;
+import grith.sibboleth.ShibLoginEventSource;
+import grith.sibboleth.Shibboleth;
+import grith.sibboleth.StaticCredentialManager;
+import grith.sibboleth.StaticIdpObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,21 +53,15 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
-import au.org.arcs.auth.shibboleth.CredentialManager;
-import au.org.arcs.auth.shibboleth.IdpObject;
-import au.org.arcs.auth.shibboleth.ShibListener;
-import au.org.arcs.auth.shibboleth.ShibLoginEventSource;
-import au.org.arcs.auth.shibboleth.Shibboleth;
-import au.org.arcs.auth.shibboleth.StaticCredentialManager;
-import au.org.arcs.auth.shibboleth.StaticIdpObject;
-import au.org.arcs.jcommons.interfaces.SlcsListener;
+
+
 
 public class SLCS implements ShibListener {
 
 	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
 	public static void main(String[] args) throws IOException,
-			KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	KeyStoreException, NoSuchAlgorithmException, CertificateException {
 
 		// optional
 		Shibboleth.initDefaultSecurityProvider();
@@ -140,7 +143,7 @@ public class SLCS implements ShibListener {
 		// fix for webstart
 		interpreter.exec("import sys");
 		interpreter.exec("sys.prefix = ''");
-		// interpreter.exec("sys.add_package('au.org.arcs.auth.shibboleth')");
+		// interpreter.exec("sys.add_package('grith.sibboleth')");
 		// interpreter.exec("sys.add_package('grith.gsindl')");
 
 		Shibboleth shib = new Shibboleth(idp, cm);
@@ -162,7 +165,7 @@ public class SLCS implements ShibListener {
 
 		interpreter.set("slcsResp", response);
 		interpreter
-				.exec("token, dn, reqURL, elements = parse_req_response(slcsResp)");
+		.exec("token, dn, reqURL, elements = parse_req_response(slcsResp)");
 
 		PyString dn = (PyString) interpreter.get("dn");
 		// PyUnicode reqUrl = (PyUnicode)interpreter.get("reqURL");
@@ -309,7 +312,7 @@ public class SLCS implements ShibListener {
 			Vector<SlcsListener> slcsChangeTargets;
 			synchronized (this) {
 				slcsChangeTargets = (Vector<SlcsListener>) slcsListeners
-						.clone();
+				.clone();
 			}
 
 			// walk through the listener list and
@@ -392,7 +395,7 @@ public class SLCS implements ShibListener {
 
 			x509Cert = (X509Certificate) CertificateFactory.getInstance(
 					"X.509", "BC").generateCertificate(
-					new ByteArrayInputStream(cert.getBytes()));
+							new ByteArrayInputStream(cert.getBytes()));
 		} catch (Exception e) {
 			fireNewSlcsCert(true, e);
 			return;
@@ -407,7 +410,7 @@ public class SLCS implements ShibListener {
 		interpreter.exec("from urllib import urlencode");
 		interpreter.exec("import urllib2");
 		interpreter
-				.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': certreq})");
+		.exec("data = urlencode({'AuthorizationToken': token,'CertificateSigningRequest': certreq})");
 		interpreter.exec("certResp = urllib2.urlopen(reqURL, data)");
 
 		interpreter.exec("from gsindl.slcs import parse_cert_response");
