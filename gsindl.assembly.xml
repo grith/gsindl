@@ -1,5 +1,5 @@
 <assembly>
-	<id>lib</id>
+	<id>lib-standalone</id>
 	<formats>
 		<format>jar</format>
 	</formats>
