@@ -80,7 +80,8 @@
 							<descriptors>
 								<descriptor>gsindl.assembly.xml</descriptor>
 							</descriptors>
-							<finalName>gsindl</finalName>
+							<finalName>gsindl-lib-standalone</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
 							<archive>
 								<index>true</index>
 								<manifest>
@@ -102,7 +103,8 @@
 							<descriptors>
 								<descriptor>gsindl.withoutJython.assembly.xml</descriptor>
 							</descriptors>
-							<finalName>gsindl</finalName>
+							<finalName>gsindl-lib</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
 							<archive>
 								<index>true</index>
 								<manifest>
