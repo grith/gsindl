@@ -32,7 +32,7 @@
 		</repository>
 		<repository>
 			<id>bestgrid.public.snapshot</id>
-			<url>http://code.arcs.org.au/nexus/content/groups/public-snapshots
+			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
 			</url>
 			<releases>
 				<enabled>false</enabled>

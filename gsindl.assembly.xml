@@ -14,11 +14,11 @@
 			<includes>
 				<include>grith:gsindl</include>
 			</includes>
-			<excludes>
-				<exclude>junit:junit</exclude>
-				<exclude>bouncycastle:bcprov-jdk15</exclude>
-				<exclude>com.jgoodies:forms</exclude>
-			</excludes>
+<!--			<excludes>-->
+<!--				<exclude>junit:junit</exclude>-->
+<!--				<exclude>bouncycastle:bcprov-jdk15</exclude>-->
+<!--				<exclude>com.jgoodies:forms</exclude>-->
+<!--			</excludes>-->
 			<unpackOptions>
 				<excludes>
 					<exclude>**/INDEX.LIST</exclude>
