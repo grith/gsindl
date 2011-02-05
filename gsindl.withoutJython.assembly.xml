@@ -34,35 +34,4 @@
 		</dependencySet>
 	</dependencySets>
 
-	<!-- couldn't figure out a different way -->
-	<files>
-		<file>
-			<source>src/main/python/gsindl/__init__.py
-			</source>
-			<outputDirectory>gsindl</outputDirectory>
-		</file>
-	</files>
-
-<!--	<fileSets>-->
-<!--		<fileSet>-->
-<!--			<directory>src/main/python</directory>-->
-<!--			<outputDirectory>Lib</outputDirectory>-->
-<!--		</fileSet>-->
-<!--	</fileSets>-->
-
-
-	<!-- probably unnecessary -->
-	<!--	<files>-->
-	<!--		<file>-->
-	<!--			<source>src/main/resources/log4j.properties</source>-->
-	<!--			<outputDirectory>/</outputDirectory>-->
-	<!--		</file>-->
-	<!--		<file>-->
-	<!--
-		<source>src/main/resources/gluev12r2-ext-class-map.properties</source>
-	-->
-	<!--			<outputDirectory>/</outputDirectory>-->
-	<!--		</file>-->
-	<!--	</files>-->
-
 </assembly>
