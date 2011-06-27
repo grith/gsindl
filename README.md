@@ -15,7 +15,7 @@ Documentation
 ### Python doc ###
 
 * [Readme.Python](https://github.com/grith/gsindl/wiki/Readme.Python) for the Python version.
-* [Python doc]()
+* [Python doc](http://grith.github.com/gsindl/pythondoc/)
 
 ### Java doc ###
 
