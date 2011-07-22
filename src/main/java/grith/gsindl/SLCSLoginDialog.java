@@ -16,8 +16,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
 
 public class SLCSLoginDialog extends JDialog implements SlcsListener {
+
+	static final Logger myLogger = Logger.getLogger(SLCSLoginDialog.class
+			.getName());
 
 	/**
 	 * Launch the application.
@@ -28,11 +32,11 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 			Shibboleth.initDefaultSecurityProvider();
 
 			SLCSLoginDialog dialog = new SLCSLoginDialog(
-			"https://slcs1.arcs.org.au/SLCS/login");
+					"https://slcs1.arcs.org.au/SLCS/login");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 	}
 

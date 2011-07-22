@@ -30,6 +30,7 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
@@ -57,6 +58,8 @@ import org.python.util.PythonInterpreter;
 
 
 public class SLCS implements ShibListener {
+
+	static final Logger myLogger = Logger.getLogger(SLCS.class.getName());
 
 	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
@@ -95,8 +98,7 @@ public class SLCS implements ShibListener {
 			ks.load(null, null);
 			certChain[0] = cert;
 		} catch (Exception e) {
-			// TODO
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 
 		File p12file = new File("/home/markus/cert.p12");
@@ -108,9 +110,7 @@ public class SLCS implements ShibListener {
 		try {
 			fos.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 
 	}
@@ -297,7 +297,6 @@ public class SLCS implements ShibListener {
 			return writer.toString();
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException("Could not create certificate request.",
 					e);
 		}
@@ -312,7 +311,7 @@ public class SLCS implements ShibListener {
 			Vector<SlcsListener> slcsChangeTargets;
 			synchronized (this) {
 				slcsChangeTargets = (Vector<SlcsListener>) slcsListeners
-				.clone();
+						.clone();
 			}
 
 			// walk through the listener list and
@@ -347,11 +346,9 @@ public class SLCS implements ShibListener {
 		try {
 			kpGen = KeyPairGenerator.getInstance("RSA", "BC");
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 
 		kpGen.initialize(1024, new SecureRandom());
