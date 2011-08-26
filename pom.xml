@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>grith</groupId>
 			<artifactId>sibboleth</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
+			<version>0.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
