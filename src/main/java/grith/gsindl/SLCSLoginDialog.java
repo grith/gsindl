@@ -16,11 +16,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SLCSLoginDialog extends JDialog implements SlcsListener {
 
-	static final Logger myLogger = Logger.getLogger(SLCSLoginDialog.class
+	static final Logger myLogger = LoggerFactory.getLogger(SLCSLoginDialog.class
 			.getName());
 
 	/**
@@ -36,7 +37,7 @@ public class SLCSLoginDialog extends JDialog implements SlcsListener {
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
-			myLogger.error(e);
+			myLogger.error(e.getLocalizedMessage());
 		}
 	}
 

@@ -30,7 +30,6 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
@@ -53,13 +52,15 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
 
 public class SLCS implements ShibListener {
 
-	static final Logger myLogger = Logger.getLogger(SLCS.class.getName());
+	static final Logger myLogger = LoggerFactory.getLogger(SLCS.class.getName());
 
 	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
 
@@ -98,7 +99,7 @@ public class SLCS implements ShibListener {
 			ks.load(null, null);
 			certChain[0] = cert;
 		} catch (Exception e) {
-			myLogger.error(e);
+			myLogger.error(e.getLocalizedMessage());
 		}
 
 		File p12file = new File("/home/markus/cert.p12");
@@ -110,7 +111,7 @@ public class SLCS implements ShibListener {
 		try {
 			fos.close();
 		} catch (Exception e) {
-			myLogger.error(e);
+			myLogger.error(e.getLocalizedMessage());
 		}
 
 	}
@@ -346,9 +347,13 @@ public class SLCS implements ShibListener {
 		try {
 			kpGen = KeyPairGenerator.getInstance("RSA", "BC");
 		} catch (NoSuchAlgorithmException e) {
-			myLogger.error(e);
+			myLogger.error(
+					"Can't init security environment: "
+							+ e.getLocalizedMessage(), e);
 		} catch (NoSuchProviderException e) {
-			myLogger.error(e);
+			myLogger.error(
+					"Can't init Security environemtn: "
+							+ e.getLocalizedMessage(), e);
 		}
 
 		kpGen.initialize(1024, new SecureRandom());
