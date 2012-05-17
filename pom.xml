@@ -29,35 +29,7 @@
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>bestgrid.public.snapshot</id>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
-			</url>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</repository>
 	</repositories>
-
-	<distributionManagement>
-		<repository>
-			<name>BeSTGRID Releases Repository</name>
-			<id>bestgrid.release</id>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>bestgrid.snapshot</id>
-			<name>BeSTGRID Snapshots Repository</name>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<issueManagement>
 		<system>Github</system>
@@ -66,7 +38,7 @@
 
 	<ciManagement>
 		<system>Hudson</system>
-		<url>http://dev.ceres.auckland.ac.nz/hudson/job/Gsindl-SNAPSHOT/</url>
+		<url>https://code.ceres.auckland.ac.nz/jenkins/job/Gsindl-SNAPSHOT/</url>
 	</ciManagement>
 
 	<scm>
@@ -76,9 +48,6 @@
 		<url>https://github.com/grith/gsindl</url>
 	</scm>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<dependencies>
 		<dependency>
@@ -90,7 +59,6 @@
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
 			<version>145</version>
-			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -215,4 +183,9 @@
 	</profiles>
 
 
+	<parent>
+		<groupId>nz.org.nesi</groupId>
+		<artifactId>nesi</artifactId>
+		<version>0.13</version>
+	</parent>
 </project>

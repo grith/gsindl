@@ -62,7 +62,7 @@ public class SLCS implements ShibListener {
 
 	static final Logger myLogger = LoggerFactory.getLogger(SLCS.class.getName());
 
-	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/SLCS/login";
+	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/Shibboleth.sso/DS?discoveryURL=https://directory.tuakiri.ac.nz/TuakiriAAF-discovery/DS&target=https://slcs1.arcs.org.au/SLCS/login";
 
 	public static void main(String[] args) throws IOException,
 	KeyStoreException, NoSuchAlgorithmException, CertificateException {
@@ -70,8 +70,8 @@ public class SLCS implements ShibListener {
 		// optional
 		Shibboleth.initDefaultSecurityProvider();
 
-		final String idp = "ARCS IdP";
-		final String username = "markus";
+		final String idp = "The University of Auckland";
+		final String username = "mbin029";
 		// I know, the password should be a char[]. But that doesn't work with
 		// the jython bindings and it would be useless in
 		// this case anyway since python uses plain strings in memory.
