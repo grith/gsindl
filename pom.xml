@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>grith</groupId>
 			<artifactId>sibboleth</artifactId>
-			<version>0.4.1-SNAPSHOT</version>
+			<version>0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
@@ -76,11 +76,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
+				<version>2.2.2</version>
+				<inherited>false</inherited>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<pushChanges>false</pushChanges>
+					<pushChanges>true</pushChanges>
 					<localCheckout>true</localCheckout>
+					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
 
@@ -186,6 +188,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.13</version>
+		<version>0.17</version>
 	</parent>
 </project>
