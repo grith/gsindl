@@ -61,6 +61,11 @@
 			<version>145</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>grisu</groupId>
+			<artifactId>grid-jcommons</artifactId>
+			<version>2.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -188,6 +193,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.17</version>
+		<version>0.23</version>
 	</parent>
 </project>

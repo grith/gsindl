@@ -41,6 +41,9 @@ class SLCSException(Exception):
 
 
 def parse_req_response(response):
+    
+   # print 'RESPONSE: '+response
+    
     """parse a SLCS response.
 
     Example SLCS Response::
@@ -61,7 +64,11 @@ def parse_req_response(response):
     :rtype: (token, dn, reqURL, extensions)
 
     """
-    slcsRespDOM = xml.dom.minidom.parse(response)
+    
+    if isinstance(response, unicode):
+        slcsRespDOM = xml.dom.minidom.parseString(response)
+    else:
+        slcsRespDOM = xml.dom.minidom.parse(response)
 
     token = slcsRespDOM.getElementsByTagName("AuthorizationToken")[0]\
                        .childNodes[0].data

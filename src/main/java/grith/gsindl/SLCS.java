@@ -27,9 +27,11 @@ import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
@@ -54,6 +56,9 @@ import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 
 
 
@@ -81,15 +86,20 @@ public class SLCS implements ShibListener {
 		CredentialManager cm = new StaticCredentialManager(username, password);
 
 		Shibboleth shibboleth = new Shibboleth(idpObject, cm);
-		shibboleth.openurl("https://slcs1.arcs.org.au/SLCS/login");
-
-		SLCS slcs = new SLCS(shibboleth);
-		slcs.shibLoginComplete(shibboleth.getResponse());
+		shibboleth.openurl(DEFAULT_SLCS_URL);
+		
+		String response = shibboleth.getResponseAsString();
+//		System.out.println(response);
+//
+//		SLCS slcs = new SLCS(shibboleth);
+//		slcs.shibLoginComplete(shibboleth.getResponse());
+		
+		SLCS slcs = new SLCS(response);
 
 		// get the certificate & key
 		X509Certificate cert = slcs.getCertificate();
 		PrivateKey privateKey = slcs.getPrivateKey();
-
+		
 		File privateKeyFile = new File("/home/markus/key.pem");
 
 		X509Certificate[] certChain = new X509Certificate[1];
@@ -124,7 +134,8 @@ public class SLCS implements ShibListener {
 	private X509Certificate x509Cert = null;
 
 	private PyInstance response;
-
+	private String responseString;
+	
 	// Event stuff
 	private Vector<SlcsListener> slcsListeners;
 
@@ -151,6 +162,30 @@ public class SLCS implements ShibListener {
 		shib.addShibListener(this);
 		shib.openurl(url);
 	}
+	
+	public SLCS(String serverResponse, Collection<SlcsListener> listeners) {
+		initSecurityStuff();
+		
+		if ( listeners != null ) {
+		for ( SlcsListener l : listeners ) {
+			addSlcsListener(l);
+		}
+		}
+		// fix for webstart
+		interpreter.exec("import sys");
+		interpreter.exec("sys.prefix = ''");
+		
+		this.responseString = serverResponse;
+		startSlcsRequest();
+	}
+	
+	public SLCS(String serverResponse, SlcsListener listener) {
+		this(serverResponse, ImmutableList.of(listener));
+	}
+	
+	public SLCS(String serverResponse) {
+		this(serverResponse, (Collection<SlcsListener>)null);
+	}
 
 	// register a listener
 	synchronized public void addSlcsListener(SlcsListener l) {
@@ -159,8 +194,9 @@ public class SLCS implements ShibListener {
 		}
 		slcsListeners.addElement(l);
 	}
+	
 
-	private String createCertificateRequest(PyInstance response) {
+	private String createCertificateRequest(Object response) {
 
 		interpreter.exec("from gsindl.slcs import parse_req_response");
 
@@ -391,7 +427,12 @@ public class SLCS implements ShibListener {
 	private void startSlcsRequest() {
 
 		try {
-			String pem = createCertificateRequest(response);
+			String pem;
+			if ( StringUtils.isNotBlank(this.responseString) ) {
+				pem = createCertificateRequest(this.responseString);
+			} else {
+				pem = createCertificateRequest(response);
+			}
 
 			String cert = submitCertificateRequest(pem);
 
