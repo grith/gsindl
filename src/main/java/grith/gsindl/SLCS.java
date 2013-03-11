@@ -67,8 +67,9 @@ public class SLCS implements ShibListener {
 
 	static final Logger myLogger = LoggerFactory.getLogger(SLCS.class.getName());
 
-	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/Shibboleth.sso/DS?discoveryURL=https://directory.tuakiri.ac.nz/TuakiriAAF-discovery/DS&target=https://slcs1.arcs.org.au/SLCS/login";
-
+//	public static final String DEFAULT_SLCS_URL = "https://slcs1.arcs.org.au/Shibboleth.sso/DS?discoveryURL=https://directory.tuakiri.ac.nz/TuakiriAAF-discovery/DS&target=https://slcs1.arcs.org.au/SLCS/login";
+	public static final String DEFAULT_SLCS_URL = "https://slcs1.nesi.org.nz/SLCS/login";
+	
 	public static void main(String[] args) throws IOException,
 	KeyStoreException, NoSuchAlgorithmException, CertificateException {
 
