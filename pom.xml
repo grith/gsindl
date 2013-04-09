@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>grith</groupId>
 			<artifactId>sibboleth</artifactId>
-			<version>0.5.1</version>
+			<version>0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
